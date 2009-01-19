@@ -10,6 +10,8 @@ EXTRA_DIST += src/test-erlusb.sh src/test-erlusb.cmds
 TESTS += src/test-erlusb.sh
 
 erlusb_SOURCES = src/erlusb.c
+erlusb_SOURCES += src/erlusb-ei.c src/erlusb-ei.h
+erlusb_SOURCES += src/driver-libusb0.c
 erlusb_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) $(CPPFLAGS)
 erlusb_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_LIBS)
 erlusb_LDFLAGS = -lpthread
