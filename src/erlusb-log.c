@@ -35,23 +35,33 @@ static
 void
 dump_data(FILE *fp, const char *data, const size_t len)
 {
-   size_t i;
-   for (i=0; i<len; i++) {
-     switch (i&15) {
-     case 0:
-       fprintf(fp, "%08x ", i);
-       break;
-     case 8:
-       fprintf(fp, " ");
-       break;
-     default:
-       break;
-     }
-     fprintf(fp, " %02x", 0xff&data[i]);
-     if (((i&15) == 15) || ((i+1) == len)) {
-       fprintf(fp, "\n");
-     }
-   }
+  size_t row;
+  for (row=0; 16*row<len; row++) {
+    size_t col;
+    fprintf(fp, "%08x ", 16*row);
+    for (col=0; col<16; col++) {
+      size_t ofs = 16*row+col;
+      if (col == 8) {
+	fprintf(fp, " ");
+      }
+      if (ofs < len) {
+	fprintf(fp, " %02x", 0xff&data[ofs]);
+      } else {
+	fprintf(fp, "   ");
+      }
+    }
+    fprintf(fp, "  |");
+    for (col=0; col<16; col++) {
+      size_t ofs = 16*row+col;
+      if (ofs < len) {
+	char c = 0xff&data[ofs];
+	fprintf(fp, "%c", ((32<=c)&&(c<127))?c:'.');
+      } else {
+	break;
+      }
+    }
+    fprintf(fp, "|\n");
+  }
 }
 
 
