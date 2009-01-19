@@ -1,5 +1,5 @@
 % erlusb:start("valgrind -v --show-reachable=yes --log-file=erlusb.vlog ./erlusb").
-erlusb:start("./erlusb").
+erlusb:start("./erlusb-libusb0").
 erlusb:xxxyyy().
 erlusb:xxx().
 erlusb:aaa().
