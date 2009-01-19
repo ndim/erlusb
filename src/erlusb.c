@@ -41,8 +41,6 @@ int main() {
   int readlen = -1;
 
   log_init();
-
-  erl_init(NULL, 0);
   driver_init();
 
   log_printf("erlusb.c init done\n");
