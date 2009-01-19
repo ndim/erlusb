@@ -24,6 +24,7 @@
 
 #include "driver.h"
 #include "erlusb-ei.h"
+#include "erlusb-log.h"
 
 
 typedef unsigned char byte;
@@ -34,28 +35,6 @@ int read_cmd(byte *buf, size_t size);
 int write_cmd(byte *buf, int len);
 
 
-void dump_data(FILE *fp, const char *data, size_t len)
-{
-   size_t i;
-   for (i=0; i<len; i++) {
-     switch (i&15) {
-     case 0:
-       fprintf(fp, "%08x ", i);
-       break;
-     case 8:
-       fprintf(fp, " ");
-       break;
-     default:
-       break;
-     }
-     fprintf(fp, " %02x", 0xff&data[i]);
-     if (((i&15) == 15) || ((i+1) == len)) {
-       fprintf(fp, "\n");
-     }
-   }
-}
-
-
 int main() {
   byte rbuf[200];
 
@@ -64,7 +43,7 @@ int main() {
   erl_init(NULL, 0);
   driver_init();
 
-  fprintf(logfile, "erlusb.c init done\n");
+  log_printf("erlusb.c init done\n");
 
   while (read_cmd(rbuf, sizeof(rbuf)) > 0) {
     ei_x_buff write_buffer;
@@ -76,21 +55,21 @@ int main() {
     int type=-1, size=-1;
     char atom[MAXATOMLEN+1];
     atom[0] = '\0';
-    fprintf(logfile, "read message\n");
-    dump_data(logfile, rbuf, sizeof(rbuf));
+    log_printf("read message\n");
+    log_data(rbuf, sizeof(rbuf));
     CHECK_EI(ei_decode_version(rbuf, &index, &version));
-    fprintf(logfile, "version: %d=0x%x\n", version, version);
+    log_printf("version: %d=0x%x\n", version, version);
     CHECK_EI(ei_get_type(rbuf, &index, &type, &size));
-    fprintf(logfile, "type of received message: index=%d, type=%d=0x%x='%c', size=%d\n", index, type, type, type, size);
+    log_printf("type of received message: index=%d, type=%d=0x%x='%c', size=%d\n", index, type, type, type, size);
     CHECK_EI(ei_decode_tuple_header(rbuf, &index, &arity));
-    fprintf(logfile, "decoded tuple header: index=%d, arity=%d\n", index, arity);
+    log_printf("decoded tuple header: index=%d, arity=%d\n", index, arity);
     CHECK_EI(ei_decode_atom(rbuf, &index, atom));
-    fprintf(logfile, "decoded atom: index=%d, atom=%s\n", index, atom);
+    log_printf("decoded atom: index=%d, atom=%s\n", index, atom);
 
     CHECK_EI(ei_x_new_with_version(wb));
     wb_empty_index = wb->index;
 
-    fprintf(logfile, "checking message: %s\n", atom);
+    log_printf("checking message: %s\n", atom);
     if (0) {
       /* nothing */
     } else if (strncmp(atom, "aaa", 3) == 0) {
@@ -117,12 +96,12 @@ int main() {
       CHECK_EI(ei_x_encode_atom(wb, "moo"));
       CHECK_EI(ei_x_encode_long(wb, (long) 13));
 
-      fprintf(logfile, "writing message: wb->buffsz=%d wb->index=%d\n", wb->buffsz, wb->index);
-      dump_data(logfile, wb->buff, wb->index);
+      log_printf("writing message: wb->buffsz=%d wb->index=%d\n", wb->buffsz, wb->index);
+      log_data(wb->buff, wb->index);
       write_cmd(wb->buff, wb->index);
-      fprintf(logfile, "wrote message\n");
+      log_printf("wrote message\n");
     } else {
-      fprintf(logfile, "no message to write back\n");
+      log_printf("no message to write back\n");
     }
     CHECK_EI(ei_x_free(wb));
   }

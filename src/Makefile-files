@@ -11,6 +11,7 @@ TESTS += src/test-erlusb.sh
 
 erlusb_SOURCES = src/erlusb.c
 erlusb_SOURCES += src/erlusb-ei.c src/erlusb-ei.h
+erlusb_SOURCES += src/erlusb-log.c src/erlusb-log.h
 erlusb_SOURCES += src/driver-libusb0.c
 erlusb_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) $(CPPFLAGS)
 erlusb_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_LIBS)
