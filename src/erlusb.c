@@ -92,10 +92,6 @@ int main() {
     }
 
     if (wb->index > wb_empty_index) {
-      CHECK_EI(ei_x_encode_tuple_header(wb, 2));
-      CHECK_EI(ei_x_encode_atom(wb, "moo"));
-      CHECK_EI(ei_x_encode_long(wb, (long) 13));
-
       log_printf("writing message: wb->buffsz=%d wb->index=%d\n", wb->buffsz, wb->index);
       log_data(wb->buff, wb->index);
       write_cmd(wb->buff, wb->index);
