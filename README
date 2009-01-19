@@ -1,0 +1,28 @@
+========================================================================
+What is erlusb?
+===============
+
+Erlusb is just a test to see how to interface libusb to Erlang.
+
+
+========================================================================
+How do I build it?
+==================
+
+  $ autoreconf -Wall -Werror -ivs
+  $ mkdir _b && cd _b
+  $ ../configure --prefix=$PWD/../_i
+  $ make all check install installcheck
+
+
+========================================================================
+What is the license?
+====================
+
+No idea (yet). The complex2.erl and stuff are from the Erlang docs,
+anyway.
+
+
+========================================================================
+End of README.
+==============

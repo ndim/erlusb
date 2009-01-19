@@ -1,0 +1,11 @@
+complex22:start("./test-erl-2").
+complex22:foo(3).
+complex22:bar(5).
+complex22:bar(352).
+complex22:xxx().
+complex22:yyy().
+complex22:fff().
+complex22:aaa().
+complex22:bbb().
+complex22:stop().
+stop

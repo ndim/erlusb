@@ -1,0 +1,22 @@
+# -*- Makefile -*-
+
+bin_PROGRAMS += test-erl-2
+check_PROGRAMS +=
+
+EXTRA_DIST += test/erl-2/test-erl.sh test/erl-2/test-erl.cmds
+
+TESTS += test/erl-2/test-erl.sh
+
+test_erl_2_SOURCES = test/erl-2/test-erl.c
+test_erl_2_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) $(CPPFLAGS)
+test_erl_2_LDADD = $(ERL_INTERFACE_LIBS)
+test_erl_2_LDFLAGS = -lpthread
+
+check_DATA += test/erl-2/complex22.beam
+CLEANFILES += test/erl-2/complex22.beam
+EXTRA_DIST += test/erl-2/complex22.erl
+
+# This rule works as the automake subdir-objects option prescribes.
+test/erl-2/complex22.beam: $(srcdir)/test/erl-2/complex22.erl
+	mkdir -p test/erl-2
+	$(ERLC) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o test/erl-2 $<

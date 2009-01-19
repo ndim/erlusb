@@ -1,0 +1,38 @@
+erlusb 0.3
+  * Update stuff to work in git managed source tree.
+
+erlusb 0.2.3
+  * Introduce beginning of autotest based testsuite.
+
+erlusb 0.2.2
+  * Introduce ERLCFLAGS and AM_ERLCFLAGS.
+  * Use proper installation directories for erlusb library components.
+
+erlusb 0.2.1
+  * Use Erlang macros introduced in autoconf 2.60 or 2.61
+
+erlusb 0.2.0
+  * automake option subdir-objects
+  * valgrind tests
+
+erlusb 0.1.1
+  * 'make distclean' clean.
+
+erlusb 0.1.0
+  * LGPL Licensing.
+  * Proof-of-concept for passing libusb C data to Erlang.
+
+erlusb 0.0.4
+  * Beefed up second erlang testcase.
+
+erlusb 0.0.3
+  * Second erlang testcase.
+
+erlusb 0.0.2
+  * Reorganized directories.
+
+erlusb 0.0.1
+  * 'make distclean' clean.
+
+erlusb 0.0.0
+  * First tests.

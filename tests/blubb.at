@@ -1,0 +1,5 @@
+AT_SETUP([blubbtest])
+AT_KEYWORDS([blubb])
+AT_CHECK([:])
+AT_CHECK([false], [1])
+AT_CLEANUP

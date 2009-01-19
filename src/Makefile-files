@@ -1,0 +1,25 @@
+# -*- Makefile -*-
+
+erlpkgbin_PROGRAMS =
+erlpkginclude_HEADERS =
+erlpkgebeam_DATA =
+
+erlpkgbin_PROGRAMS += erlusb
+check_PROGRAMS += erlusb
+EXTRA_DIST += src/test-erlusb.sh src/test-erlusb.cmds
+TESTS += src/test-erlusb.sh
+
+erlusb_SOURCES = src/erlusb.c
+erlusb_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) $(CPPFLAGS)
+erlusb_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_LIBS)
+erlusb_LDFLAGS = -lpthread
+
+erlpkginclude_HEADERS += src/erlusb.hrl
+erlpkgebeam_DATA += src/erlusb.beam
+CLEANFILES += src/erlusb.beam erlusb.log erlusb.vlog
+EXTRA_DIST += src/erlusb.erl src/erlusb.hrl
+
+# This rule works as the automake subdir-objects option prescribes.
+src/erlusb.beam: $(srcdir)/src/erlusb.erl $(srcdir)/src/erlusb.hrl
+	mkdir -p src
+	$(ERLC) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o src $<

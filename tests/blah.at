@@ -1,0 +1,5 @@
+AT_SETUP([blahtest])
+AT_KEYWORDS([blah])
+AT_CHECK([:])
+AT_CHECK([false], [1])
+AT_CLEANUP
