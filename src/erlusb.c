@@ -325,12 +325,6 @@ void dump_data(FILE *fp, const char *data, size_t len)
 int main() {
   byte rbuf[200];
 
-  int wbuf_size = 400;
-  byte *wbuf = erl_malloc(wbuf_size);
-#ifdef OLD_STUFF
-  int wbuf_len = 0;
-#endif /* OLD_STUFF */
-
   log = fopen("erlusb.log", "a");
   setvbuf(log, NULL, _IONBF, 0);
 
@@ -343,7 +337,8 @@ int main() {
 	do { \
 		int ret = (call); \
 		if (ret != 0) { \
-			fprintf(log, "error running %s: returned %d\n", #call, ret); \
+			fprintf(log, "error running %s: returned %d\n", \
+                                #call, ret); \
 			exit(17); \
 		} \
 	} while (0)
@@ -410,15 +405,16 @@ int main() {
 #endif /* OLD_STUFF */
 
     if (1) {
-      int wi = 0;
-      ei_encode_version(wbuf, &wi);
-      ei_encode_tuple_header(wbuf, &wi, 2);
-      ei_encode_atom(wbuf, &wi, "moo");
-      ei_encode_long(wbuf, &wi, (long) 13);
+      ei_x_buff wb;
+      CHECK_EI(ei_x_new_with_version(&wb));
+      CHECK_EI(ei_x_encode_tuple_header(&wb, 2));
+      CHECK_EI(ei_x_encode_atom(&wb, "moo"));
+      CHECK_EI(ei_x_encode_long(&wb, (long) 13));
 
-      fprintf(log, "writing message: wi=%d\n", wi);
-      write_cmd(wbuf, wi);
+      fprintf(log, "writing message: wb.buffsz=%d wb.index=%d\n", wb.buffsz, wb.index);
+      write_cmd(wb.buff, wb.index);
       fprintf(log, "wrote message\n");
+      CHECK_EI(ei_x_free(&wb));
     }
 
 #ifdef OLD_STUFF
@@ -430,7 +426,6 @@ int main() {
 
   fprintf(log, "erlusb.c finished.\n");
   fclose(log);
-  erl_free(wbuf);
   return 0;
 }
 
