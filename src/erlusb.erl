@@ -32,7 +32,8 @@ bar(Y) ->
 xxx() ->
     call_port({xxx}).
 xxxyyy() ->
-    call_port({xxxyyy}).
+    {call_port({xxxyyy}),
+     call_port({fff})}.
 aaa() ->
     call_port({aaa}).
 

@@ -85,6 +85,7 @@ int main() {
       CHECK_EI(ei_x_encode_string(wb, "Humpf"));
       CHECK_EI(ei_x_encode_string(wb, "Mops"));
       CHECK_EI(ei_x_encode_string(wb, "Oerks"));
+      CHECK_EI(ei_x_encode_empty_list(wb));
     } else if (strncmp(atom, "close", 5) == 0) {
       CHECK_EI(ei_x_encode_atom(wb, "closed"));
     } else {
