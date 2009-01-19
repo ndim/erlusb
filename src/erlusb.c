@@ -37,6 +37,7 @@ int write_cmd(byte *buf, int len);
 
 int main() {
   byte rbuf[200];
+  int readlen = -1;
 
   log_init();
 
@@ -45,7 +46,7 @@ int main() {
 
   log_printf("erlusb.c init done\n");
 
-  while (read_cmd(rbuf, sizeof(rbuf)) > 0) {
+  while ((readlen = read_cmd(rbuf, sizeof(rbuf))) > 0) {
     ei_x_buff write_buffer;
     ei_x_buff *wb = &write_buffer;
     int wb_empty_index;
@@ -56,7 +57,7 @@ int main() {
     char atom[MAXATOMLEN+1];
     atom[0] = '\0';
     log_printf("read message\n");
-    log_data(rbuf, sizeof(rbuf));
+    log_data(rbuf, readlen);
     CHECK_EI(ei_decode_version(rbuf, &index, &version));
     log_printf("version: %d=0x%x\n", version, version);
     CHECK_EI(ei_get_type(rbuf, &index, &type, &size));
