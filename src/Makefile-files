@@ -11,10 +11,10 @@ TESTS += src/test-libusb0.sh
 check_PROGRAMS += erlusb-libusb0
 
 erlpkgbin_PROGRAMS += erlusb-libusb0
-erlusb_libusb0_SOURCES  = src/erlusb.c
+erlusb_libusb0_SOURCES  = src/erlusb-main.c
 erlusb_libusb0_SOURCES += src/erlusb-ei.c src/erlusb-ei.h
 erlusb_libusb0_SOURCES += src/erlusb-log.c src/erlusb-log.h
-erlusb_libusb0_SOURCES += src/driver-libusb0.c
+erlusb_libusb0_SOURCES += src/driver-libusb0.c src/driver.h
 erlusb_libusb0_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) $(LIBUSB_CFLAGS) $(CPPFLAGS)
 erlusb_libusb0_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_LIBS)
 erlusb_libusb0_LDFLAGS = -lpthread
@@ -27,10 +27,10 @@ TESTS += src/test-libusb1.sh
 check_PROGRAMS += erlusb-libusb1
 
 erlpkgbin_PROGRAMS += erlusb-libusb1
-erlusb_libusb1_SOURCES  = src/erlusb.c
+erlusb_libusb1_SOURCES  = src/erlusb-main.c
 erlusb_libusb1_SOURCES += src/erlusb-ei.c src/erlusb-ei.h
 erlusb_libusb1_SOURCES += src/erlusb-log.c src/erlusb-log.h
-erlusb_libusb1_SOURCES += src/driver-libusb1.c
+erlusb_libusb1_SOURCES += src/driver-libusb1.c src/driver.h
 erlusb_libusb1_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) -std=c99 $(LIBUSB_10_CFLAGS) $(CPPFLAGS)
 erlusb_libusb1_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_10_LIBS)
 erlusb_libusb1_LDFLAGS = -lpthread

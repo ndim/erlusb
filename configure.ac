@@ -1,6 +1,6 @@
 AC_PREREQ(2.61) dnl -*- Autoconf -*-
 AC_INIT([Erlang USB interface], [0.3], [hun@n-dimensional.de], [erlusb])
-AC_CONFIG_SRCDIR([src/erlusb.c])
+AC_CONFIG_SRCDIR([src/erlusb-main.c])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([auxdir])
 AM_INIT_AUTOMAKE([
