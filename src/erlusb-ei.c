@@ -1,5 +1,5 @@
-/* erlusb-ei.c - Erlang interface to libusb
- * Copyright (C) 2006,2009 Hans Ulrich Niedermann <hun@n-dimensional.de>
+/* erlusb-ei.c - ei utility functions
+ * Copyright (C) 2009 Hans Ulrich Niedermann <hun@n-dimensional.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

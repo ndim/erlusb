@@ -1,4 +1,4 @@
-/* driver.h - Erlang interface to libusb
+/* driver.h - backend specific part of Erlang USB interface
  * Copyright (C) 2006,2009 Hans Ulrich Niedermann <hun@n-dimensional.de>
  *
  * This library is free software; you can redistribute it and/or

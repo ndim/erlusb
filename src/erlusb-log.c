@@ -1,5 +1,5 @@
-/* erlusb-log.c - Erlang interface to libusb
- * Copyright (C) 2006,2009 Hans Ulrich Niedermann <hun@n-dimensional.de>
+/* erlusb-log.c - simple logging mechanism for debugging
+ * Copyright (C) 2009 Hans Ulrich Niedermann <hun@n-dimensional.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

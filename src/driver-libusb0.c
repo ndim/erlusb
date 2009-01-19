@@ -1,4 +1,4 @@
-/* driver-libusb0.c - Erlang interface to libusb
+/* driver-libusb0.c - libusb0 specific part of Erlang USB interface
  * Copyright (C) 2006,2009 Hans Ulrich Niedermann <hun@n-dimensional.de>
  *
  * This library is free software; you can redistribute it and/or
