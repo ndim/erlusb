@@ -57,6 +57,7 @@ ei_x_encode_usb_endpoint_list(ei_x_buff *wb,
   for (index=0; index<ifd->bNumEndpoints; index++) {
     ei_x_encode_usb_endpoint(wb, &(ifd->endpoint[index]));
   }
+  CHECK_EI(ei_x_encode_empty_list(wb));
 }
 
 
@@ -88,8 +89,10 @@ ei_x_encode_usb_altsettings(ei_x_buff *wb,
   int set_index;
   CHECK_EI(ei_x_encode_list_header(wb, interface->num_altsetting));
   for (set_index = 0; set_index < interface->num_altsetting; set_index++) {
-    ei_x_encode_usb_interface_descriptor(wb, hdl, &(interface->altsetting[set_index]));
+    ei_x_encode_usb_interface_descriptor(wb, hdl,
+					 &(interface->altsetting[set_index]));
   }
+  CHECK_EI(ei_x_encode_empty_list(wb));
 }
 
 
@@ -114,6 +117,7 @@ ei_x_encode_usb_interface_tree(ei_x_buff *wb,
   for (interf_index = 0; interf_index < config->bNumInterfaces; interf_index++) {
     ei_x_encode_usb_interface(wb, hdl, &(config->interface[interf_index]));
   }
+  CHECK_EI(ei_x_encode_empty_list(wb));
 }
 
 
@@ -141,6 +145,7 @@ ei_x_encode_usb_configuration_tree(ei_x_buff *wb,
     ei_x_encode_usb_configuration(wb, hdl, config_index,
 				  &(dev->config[config_index]));
   }
+  CHECK_EI(ei_x_encode_empty_list(wb));
 }
 
 
@@ -191,18 +196,12 @@ void
 ei_x_encode_usb_device_list(ei_x_buff *wb,
 			    struct usb_bus *bus)
 {
-  unsigned int dev_count = 0;
   struct usb_device *dev;
   for (dev = bus->devices; dev; dev = dev->next) {
-    dev_count++;
+    ei_x_encode_list_header(wb, 1);
+    ei_x_encode_usb_device(wb, dev);
   }
-  if (1) {
-    unsigned int dev_index = 0;
-    CHECK_EI(ei_x_encode_list_header(wb, dev_count));
-    for (dev = bus->devices; dev; dev = dev->next, dev_index++) {
-      ei_x_encode_usb_device(wb, dev);
-    }
-  }
+  CHECK_EI(ei_x_encode_empty_list(wb));
 }
 
 
@@ -220,20 +219,14 @@ ei_x_encode_usb_bus(ei_x_buff *wb,
 void
 ei_x_encode_usb_bus_list(ei_x_buff *wb)
 {
-  unsigned int bus_count = 0;
   struct usb_bus *busses;
   struct usb_bus *bus;
   usb_find_busses();
   usb_find_devices();
   busses = usb_get_busses();
   for (bus = busses; bus; bus = bus->next) {
-    bus_count++;
+    ei_x_encode_list_header(wb, 1);
+    ei_x_encode_usb_bus(wb, bus);
   }
-  if (1) {
-    unsigned int bus_index = 0;
-    CHECK_EI(ei_x_encode_list_header(wb, bus_count));
-    for (bus = busses; bus; bus = bus->next, bus_index++) {
-      ei_x_encode_usb_bus(wb, bus);
-    }
-  }
+  ei_x_encode_empty_list(wb);
 }
