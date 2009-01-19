@@ -29,6 +29,7 @@
 
 typedef unsigned char byte;
 
+
 int write_exact(byte *buf, int len);
 int read_exact(byte *buf, size_t size, int len);
 int read_cmd(byte *buf, size_t size);
@@ -62,7 +63,9 @@ int main() {
     CHECK_EI(ei_decode_version(rbuf, &index, &version));
     log_printf("version: %d=0x%x\n", version, version);
     CHECK_EI(ei_get_type(rbuf, &index, &type, &size));
-    log_printf("type of received message: index=%d, type=%d=0x%x='%c', size=%d\n", index, type, type, type, size);
+    log_printf("type of received message: "
+	       "index=%d, type=%d=0x%x='%c', size=%d\n",
+	       index, type, type, type, size);
     CHECK_EI(ei_decode_tuple_header(rbuf, &index, &arity));
     log_printf("decoded tuple header: index=%d, arity=%d\n", index, arity);
     CHECK_EI(ei_decode_atom(rbuf, &index, atom));
@@ -95,7 +98,8 @@ int main() {
     }
 
     if (wb->index > wb_empty_index) {
-      log_printf("writing message: wb->buffsz=%d wb->index=%d\n", wb->buffsz, wb->index);
+      log_printf("writing message: wb->buffsz=%d wb->index=%d\n",
+		 wb->buffsz, wb->index);
       log_data(wb->buff, wb->index);
       log_buff_term(wb->buff);
       write_cmd(wb->buff, wb->index);

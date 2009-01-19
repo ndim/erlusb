@@ -41,10 +41,10 @@ ei_x_encode_usb_string(ei_x_buff *wb,
   if (index &&
       (0 <= usb_get_string_simple(hdl, index, buf, sizeof(buf)))) {
     CHECK_EI(ei_x_encode_tuple_header(wb, 2));
-    CHECK_EI(ei_x_encode_long(wb, (long)index)); /* FIXME: "negative" values? */
+    CHECK_EI(ei_x_encode_uint(wb, index));
     CHECK_EI(ei_x_encode_string(wb, buf));
   } else {
-    CHECK_EI(ei_x_encode_long(wb, (long)index)); /* FIXME: "negative" values? */
+    CHECK_EI(ei_x_encode_uint(wb, index));
   }
 }
 
@@ -70,10 +70,10 @@ void
 ei_x_encode_usb_endpoint_list(ei_x_buff *wb,
 			      struct usb_interface_descriptor *ifd)
 {
-  unsigned int index;
+  unsigned int i;
   CHECK_EI(ei_x_encode_list_header(wb, ifd->bNumEndpoints));
-  for (index=0; index<ifd->bNumEndpoints; index++) {
-    ei_x_encode_usb_endpoint(wb, &(ifd->endpoint[index]));
+  for (i=0; i<ifd->bNumEndpoints; i++) {
+    ei_x_encode_usb_endpoint(wb, &(ifd->endpoint[i]));
   }
   CHECK_EI(ei_x_encode_empty_list(wb));
 }
@@ -104,11 +104,11 @@ ei_x_encode_usb_altsettings(ei_x_buff *wb,
 			    usb_dev_handle *hdl,
 			    struct usb_interface *interface)
 {
-  int set_index;
+  int i;
   CHECK_EI(ei_x_encode_list_header(wb, interface->num_altsetting));
-  for (set_index = 0; set_index < interface->num_altsetting; set_index++) {
+  for (i=0; i<interface->num_altsetting; i++) {
     ei_x_encode_usb_interface_descriptor(wb, hdl,
-					 &(interface->altsetting[set_index]));
+					 &(interface->altsetting[i]));
   }
   CHECK_EI(ei_x_encode_empty_list(wb));
 }
@@ -130,10 +130,10 @@ ei_x_encode_usb_interface_tree(ei_x_buff *wb,
 			       usb_dev_handle *hdl,
 			       struct usb_config_descriptor *config)
 {
-  int interf_index;
+  int i;
   CHECK_EI(ei_x_encode_list_header(wb, config->bNumInterfaces));
-  for (interf_index = 0; interf_index < config->bNumInterfaces; interf_index++) {
-    ei_x_encode_usb_interface(wb, hdl, &(config->interface[interf_index]));
+  for (i=0; i<config->bNumInterfaces; i++) {
+    ei_x_encode_usb_interface(wb, hdl, &(config->interface[i]));
   }
   CHECK_EI(ei_x_encode_empty_list(wb));
 }
@@ -141,7 +141,8 @@ ei_x_encode_usb_interface_tree(ei_x_buff *wb,
 
 void
 ei_x_encode_usb_configuration(ei_x_buff *wb,
-			      usb_dev_handle *hdl, unsigned int config_index,
+			      usb_dev_handle *hdl,
+			      unsigned int config_index,
 			      struct usb_config_descriptor *config)
 {
   CHECK_EI(ei_x_encode_tuple_header(wb, 4));
@@ -157,11 +158,10 @@ ei_x_encode_usb_configuration_tree(ei_x_buff *wb,
 				   struct usb_device *dev,
 				   usb_dev_handle *hdl)
 {
-  unsigned int config_index;
+  unsigned int i;
   CHECK_EI(ei_x_encode_list_header(wb, dev->descriptor.bNumConfigurations));
-  for (config_index = 0; config_index < dev->descriptor.bNumConfigurations; config_index++) {
-    ei_x_encode_usb_configuration(wb, hdl, config_index,
-				  &(dev->config[config_index]));
+  for (i=0; i<dev->descriptor.bNumConfigurations; i++) {
+    ei_x_encode_usb_configuration(wb, hdl, i, &(dev->config[i]));
   }
   CHECK_EI(ei_x_encode_empty_list(wb));
 }
@@ -215,7 +215,7 @@ ei_x_encode_usb_device_list(ei_x_buff *wb,
 			    struct usb_bus *bus)
 {
   struct usb_device *dev;
-  for (dev = bus->devices; dev; dev = dev->next) {
+  for (dev=bus->devices; dev; dev=dev->next) {
     ei_x_encode_list_header(wb, 1);
     ei_x_encode_usb_device(wb, dev);
   }
@@ -242,7 +242,7 @@ ei_x_encode_usb_bus_list(ei_x_buff *wb)
   usb_find_busses();
   usb_find_devices();
   busses = usb_get_busses();
-  for (bus = busses; bus; bus = bus->next) {
+  for (bus=busses; bus; bus=bus->next) {
     ei_x_encode_list_header(wb, 1);
     ei_x_encode_usb_bus(wb, bus);
   }

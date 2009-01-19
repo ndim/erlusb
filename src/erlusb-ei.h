@@ -19,8 +19,6 @@
 #ifndef ERLUSB_EI_H
 #define ERLUSB_EI_H
 
-#include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 
 #include <erl_interface.h>

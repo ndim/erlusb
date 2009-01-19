@@ -23,7 +23,9 @@
 #include "erlusb-log.h"
 #include "ei.h"
 
+
 static FILE *logfile = NULL;
+
 
 void
 log_init()
@@ -32,12 +34,14 @@ log_init()
   setvbuf(logfile, NULL, _IONBF, 0);
 }
 
+
 void
 log_close()
 {
   fprintf(logfile, "erlusb.c finished.\n");
   fclose(logfile);
 }
+
 
 void
 log_printf(const char *format, ...)
@@ -49,6 +53,7 @@ log_printf(const char *format, ...)
   va_end(aq);
   va_end(ap);
 }
+
 
 static
 void
@@ -89,6 +94,7 @@ log_data(const char *data, const size_t len)
 {
   dump_data(logfile, data, len);
 }
+
 
 void
 log_buff_term(const char *buff)
