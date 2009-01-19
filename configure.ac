@@ -14,11 +14,16 @@ AM_INIT_AUTOMAKE([
 
 # Checks for programs.
 AC_PROG_CC
+CXX=false
+F77=false
+AC_PROG_LIBTOOL
 AM_PROG_CC_C_O
 AC_ERLANG_NEED_ERLC
 AC_ERLANG_NEED_ERL
 AC_ERLANG_SUBST_ROOT_DIR
 AC_ERLANG_SUBST_LIB_DIR
+m4_pattern_forbid([^PKG_PROG_PKG_CONFIG])dnl
+PKG_PROG_PKG_CONFIG()
 
 # Checks for libraries.
 AC_ERLANG_CHECK_LIB([stdlib],
@@ -40,8 +45,15 @@ AC_SUBST([erlpkglibdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/lib"])
 
 AC_SUBST([AM_ERLCFLAGS], [-v])
 
-AC_SUBST([LIBUSB_CPPFLAGS], [])
-AC_SUBST([LIBUSB_LIBS], [-lusb])
+PKG_CHECK_MODULES([LIBUSB], [libusb],
+                  [have_libusb=yes],
+                  [have_libusb=no])
+AM_CONDITIONAL([HAVE_LIBUSB], [test "x$have_libusb" = "xyes"])
+
+PKG_CHECK_MODULES([LIBUSB_10], [libusb-1.0],
+                  [have_libusb_10=yes],
+                  [have_libusb_10=no])
+AM_CONDITIONAL([HAVE_LIBUSB_10], [test "x$have_libusb_10" = "xyes"])
 
 # Checks for header files.
 
@@ -67,3 +79,8 @@ AC_CONFIG_FILES([
 Makefile
 ])
 AC_OUTPUT
+
+echo "erlusb compile option summary:
+   libusb-0.1: $have_libusb
+   libusb-1.0: $have_libusb_10
+Please check this meets your expectations."

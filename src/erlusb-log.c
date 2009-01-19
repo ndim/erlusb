@@ -106,7 +106,7 @@ log_buff_term(const char *buff)
     fprintf(logfile, "error: could not decode version\n");
     return;
   }
-  if (0 != ei_print_term(logfile, buff, &index)) {
+  if (0 > ei_print_term(logfile, buff, &index)) {
     fprintf(logfile, "error: could not decode term\n");
     return;
   }

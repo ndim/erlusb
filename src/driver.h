@@ -28,6 +28,10 @@ driver_init();
 
 extern
 void
+driver_exit();
+
+extern
+void
 ei_x_encode_usb_bus_list(ei_x_buff *wb);
 
 #endif /* !DRIVER_H */

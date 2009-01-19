@@ -96,15 +96,22 @@ int main() {
     }
 
     if (wb->index > wb_empty_index) {
-      log_printf("writing message: wb->buffsz=%d wb->index=%d\n",
-		 wb->buffsz, wb->index);
-      log_data(wb->buff, wb->index);
-      log_buff_term(wb->buff);
-      write_cmd(wb->buff, wb->index);
-      log_printf("wrote message\n");
+      /* OK */
     } else {
       log_printf("no message to write back\n");
+      CHECK_EI(ei_x_encode_tuple_header(wb, 3));
+      CHECK_EI(ei_x_encode_atom(wb, "internal_error"));
+      CHECK_EI(ei_x_encode_atom(wb, "no_message_for"));
+      CHECK_EI(ei_x_encode_atom(wb, atom));
     }
+
+    log_printf("writing message: wb->buffsz=%d wb->index=%d\n",
+	       wb->buffsz, wb->index);
+    log_data(wb->buff, wb->index);
+    log_buff_term(wb->buff);
+    write_cmd(wb->buff, wb->index);
+    log_printf("wrote message\n");
+
     CHECK_EI(ei_x_free(wb));
   }
 

@@ -1,0 +1,6 @@
+% erlusb:start("valgrind -v --show-reachable=yes --log-file=erlusb.vlog ./erlusb").
+erlusb:start("./erlusb-libusb1").
+erlusb:ei_tests().
+erlusb:usb_bus_list().
+erlusb:stop().
+stop
