@@ -76,7 +76,7 @@ int main() {
     if (0) {
       /* nothing */
     } else if (strncmp(atom, "usb_bus_list", 13) == 0) {
-      ei_x_encode_usb_bus_list(wb);
+      ei_x_encode_all_devices(wb);
     } else if (strncmp(atom, "test-1", 7) == 0) {
       CHECK_EI(ei_x_encode_string(wb, "Humpf, Mops, Oerks!"));
     } else if (strncmp(atom, "test-2", 7) == 0) {
@@ -115,6 +115,7 @@ int main() {
     CHECK_EI(ei_x_free(wb));
   }
 
+  driver_exit();
   log_close();
   return 0;
 }

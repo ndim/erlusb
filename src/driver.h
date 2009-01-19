@@ -32,7 +32,7 @@ driver_exit();
 
 extern
 void
-ei_x_encode_usb_bus_list(ei_x_buff *wb);
+ei_x_encode_all_devices(ei_x_buff *wb);
 
 #endif /* !DRIVER_H */
 

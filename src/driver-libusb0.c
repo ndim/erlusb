@@ -34,6 +34,12 @@ driver_init()
 
 
 void
+driver_exit()
+{
+}
+
+
+void
 ei_x_encode_usb_string(ei_x_buff *wb,
 		       usb_dev_handle *hdl, u_int8_t index)
 {
@@ -247,4 +253,11 @@ ei_x_encode_usb_bus_list(ei_x_buff *wb)
     ei_x_encode_usb_bus(wb, bus);
   }
   ei_x_encode_empty_list(wb);
+}
+
+
+void
+ei_x_encode_all_devices(ei_x_buff *wb)
+{
+  ei_x_encode_usb_bus_list(wb);
 }
