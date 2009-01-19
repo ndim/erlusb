@@ -25,6 +25,24 @@
 #include <ei.h>
 
 
+int ei_x_encode_uint(ei_x_buff *wb,
+		     unsigned int uint)
+{
+  return ei_x_encode_long(wb, (long)(uint)); /* FIXME: signs etc? */
+}
+
+
+#define CHECK_EI(call) \
+	do { \
+		int ret = (call); \
+		if (ret != 0) { \
+			fprintf(log, "error running %s: returned %d\n", \
+                                #call, ret); \
+			exit(17); \
+		} \
+	} while (0)
+
+
 static FILE *log = NULL;
 
 typedef unsigned char byte;
@@ -34,217 +52,185 @@ int read_exact(byte *buf, size_t size, int len);
 int read_cmd(byte *buf, size_t size);
 int write_cmd(byte *buf, int len);
 
-#define ENCODE(term)					       \
-  do {							       \
-    wbuf_len = erl_term_len(term);			       \
-    if (wbuf_len > wbuf_size) {				       \
-      erl_free(wbuf);					       \
-      wbuf = erl_malloc(2*wbuf_len);			       \
-      /* FIXME: Error if wbuf == NULL; */		       \
-    }							       \
-    erl_encode(term, wbuf);				       \
-  } while (0)
 
-
-#define RETURN_LOG_ETERM(term)			\
-  do {						\
-    ETERM *result = (term);			\
-    erl_print_term(log, result);		\
-    fprintf(log, "\n");				\
-    return result;				\
-  } while (0)
-
-
-#define RETURN_LOG_CLEANUP_ETERM(term, cleanup)		\
-  do {							\
-    ETERM *result = (term);				\
-    erl_print_term(log, result);			\
-    fprintf(log, "\n");					\
-    cleanup;						\
-    return result;					\
-  } while (0)
-
-#define RETURN_CLEANUP_ETERM(term, cleanup)	\
-  do {						\
-    ETERM *retval = (term);			\
-    cleanup;					\
-    return retval;				\
-  } while (0);
-
-
-/** erl_mk_usb_string
- *
- * Note: Caller must erl_free_compound() the return value
+/** ei_x_encode_usb_string
  */
 
-ETERM *erl_mk_usb_string(usb_dev_handle *hdl, u_int8_t index)
+void
+ei_x_encode_usb_string(ei_x_buff *wb,
+		       usb_dev_handle *hdl, u_int8_t index)
 {
   char buf[256];
-  if (index && 
+  if (index &&
       (0 <= usb_get_string_simple(hdl, index, buf, sizeof(buf)))) {
-    ETERM *terms[2];
-    terms[0] = erl_mk_uint(index);
-    terms[1] = erl_mk_string(buf);
-    return erl_mk_tuple(terms, 2);
+    CHECK_EI(ei_x_encode_tuple_header(wb, 2));
+    CHECK_EI(ei_x_encode_long(wb, (long)index)); /* FIXME: "negative" values? */
+    CHECK_EI(ei_x_encode_string(wb, buf));
   } else {
-    return erl_mk_uint(index);
+    CHECK_EI(ei_x_encode_long(wb, (long)index)); /* FIXME: "negative" values? */
   }
 }
 
 
-ETERM *erl_mk_usb_endpoint(struct usb_endpoint_descriptor *epd)
+void
+ei_x_encode_usb_endpoint(ei_x_buff *wb,
+			 struct usb_endpoint_descriptor *epd)
 {
-  unsigned int n = 0;
-  ETERM *terms[16];
-  terms[n++] = erl_mk_atom("usb_endpoint_descriptor");
-  terms[n++] = erl_mk_uint(epd->bLength);
-  terms[n++] = erl_mk_uint(epd->bDescriptorType);
-  terms[n++] = erl_mk_uint(epd->bEndpointAddress);
-  terms[n++] = erl_mk_uint(epd->bmAttributes);
-  terms[n++] = erl_mk_uint(epd->wMaxPacketSize);
-  terms[n++] = erl_mk_uint(epd->bInterval);
-  terms[n++] = erl_mk_uint(epd->bRefresh);
-  terms[n++] = erl_mk_uint(epd->bSynchAddress);
-  RETURN_LOG_ETERM(erl_mk_tuple(terms, n));
+  CHECK_EI(ei_x_encode_tuple_header(wb, 9));
+  CHECK_EI(ei_x_encode_atom(wb, "usb_endpoint_descriptor"));
+  CHECK_EI(ei_x_encode_uint(wb, epd->bLength));
+  CHECK_EI(ei_x_encode_uint(wb, epd->bDescriptorType));
+  CHECK_EI(ei_x_encode_uint(wb, epd->bEndpointAddress));
+  CHECK_EI(ei_x_encode_uint(wb, epd->bmAttributes));
+  CHECK_EI(ei_x_encode_uint(wb, epd->wMaxPacketSize));
+  CHECK_EI(ei_x_encode_uint(wb, epd->bInterval));
+  CHECK_EI(ei_x_encode_uint(wb, epd->bRefresh));
+  CHECK_EI(ei_x_encode_uint(wb, epd->bSynchAddress));
 }
 
 
-ETERM *erl_mk_usb_endpoint_list(struct usb_interface_descriptor *ifd)
+void
+ei_x_encode_usb_endpoint_list(ei_x_buff *wb,
+			      struct usb_interface_descriptor *ifd)
 {
-  ETERM **list_terms = erl_malloc(ifd->bNumEndpoints*sizeof(ETERM *));
   unsigned int index;
+  CHECK_EI(ei_x_encode_list_header(wb, ifd->bNumEndpoints));
   for (index=0; index<ifd->bNumEndpoints; index++) {
-    list_terms[index] = erl_mk_usb_endpoint(&(ifd->endpoint[index]));
+    ei_x_encode_usb_endpoint(wb, &(ifd->endpoint[index]));
   }
-  RETURN_CLEANUP_ETERM(erl_mk_list(list_terms, index),
-		       erl_free(list_terms));
 }
 
 
-ETERM *erl_mk_usb_interface_descriptor(usb_dev_handle *hdl, struct usb_interface_descriptor *ifd)
+void
+ei_x_encode_usb_interface_descriptor(ei_x_buff *wb,
+				     usb_dev_handle *hdl,
+				     struct usb_interface_descriptor *ifd)
 {
-  ETERM *terms[16];
-  unsigned int n = 0;
-  terms[n++] = erl_mk_atom("usb_interface_descriptor");
-  terms[n++] = erl_mk_uint(ifd->bLength);
-  terms[n++] = erl_mk_uint(ifd->bDescriptorType);
-  terms[n++] = erl_mk_uint(ifd->bInterfaceNumber);
-  terms[n++] = erl_mk_uint(ifd->bAlternateSetting);
-  terms[n++] = erl_mk_uint(ifd->bNumEndpoints);
-  terms[n++] = erl_mk_uint(ifd->bInterfaceClass);
-  terms[n++] = erl_mk_uint(ifd->bInterfaceSubClass);
-  terms[n++] = erl_mk_uint(ifd->bInterfaceProtocol);
-  terms[n++] = erl_mk_usb_string(hdl, ifd->iInterface);
-  terms[n++] = erl_mk_usb_endpoint_list(ifd);
-  RETURN_LOG_ETERM(erl_mk_tuple(terms, n));
+  CHECK_EI(ei_x_encode_tuple_header(wb, 11));
+  CHECK_EI(ei_x_encode_atom(wb, "usb_interface_descriptor"));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bLength));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bDescriptorType));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bInterfaceNumber));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bAlternateSetting));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bNumEndpoints));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bInterfaceClass));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bInterfaceSubClass));
+  CHECK_EI(ei_x_encode_uint(wb, ifd->bInterfaceProtocol));
+  ei_x_encode_usb_string(wb, hdl, ifd->iInterface);
+  ei_x_encode_usb_endpoint_list(wb, ifd);
 }
 
 
-ETERM *erl_mk_usb_altsettings(usb_dev_handle *hdl, struct usb_interface *interface)
+void
+ei_x_encode_usb_altsettings(ei_x_buff *wb,
+			    usb_dev_handle *hdl,
+			    struct usb_interface *interface)
 {
-  ETERM **set_terms = erl_malloc(interface->num_altsetting*sizeof(ETERM *));
   int set_index;
+  CHECK_EI(ei_x_encode_list_header(wb, interface->num_altsetting));
   for (set_index = 0; set_index < interface->num_altsetting; set_index++) {
-    set_terms[set_index] = erl_mk_usb_interface_descriptor(hdl, &(interface->altsetting[set_index]));
-  }  
-  RETURN_CLEANUP_ETERM(erl_mk_list(set_terms, set_index), 
-		       erl_free(set_terms));
+    ei_x_encode_usb_interface_descriptor(wb, hdl, &(interface->altsetting[set_index]));
+  }
 }
 
 
-ETERM *erl_mk_usb_interface(usb_dev_handle *hdl, struct usb_interface *interface)
+void
+ei_x_encode_usb_interface(ei_x_buff *wb,
+			  usb_dev_handle *hdl,
+			  struct usb_interface *interface)
 {
-  unsigned int n = 0;
-  ETERM *terms[16];
-  terms[n++] = erl_mk_atom("usb_interface");
-  terms[n++] = erl_mk_usb_altsettings(hdl, interface);
-  RETURN_LOG_ETERM(erl_mk_tuple(terms, n));
+  CHECK_EI(ei_x_encode_tuple_header(wb, 2));
+  CHECK_EI(ei_x_encode_atom(wb, "usb_interface"));
+  ei_x_encode_usb_altsettings(wb, hdl, interface);
 }
 
 
-ETERM *erl_mk_usb_interface_tree(usb_dev_handle *hdl, struct usb_config_descriptor *config)
+void
+ei_x_encode_usb_interface_tree(ei_x_buff *wb,
+			       usb_dev_handle *hdl,
+			       struct usb_config_descriptor *config)
 {
-  ETERM **interf_terms = erl_malloc(config->bNumInterfaces*sizeof(ETERM *));
-  unsigned int interf_index;
+  int interf_index;
+  CHECK_EI(ei_x_encode_list_header(wb, config->bNumInterfaces));
   for (interf_index = 0; interf_index < config->bNumInterfaces; interf_index++) {
-    interf_terms[interf_index] = erl_mk_usb_interface(hdl, &(config->interface[interf_index]));
+    ei_x_encode_usb_interface(wb, hdl, &(config->interface[interf_index]));
   }
-  RETURN_CLEANUP_ETERM(erl_mk_list(interf_terms, interf_index),
-		       erl_free(interf_terms));
 }
 
 
-ETERM *erl_mk_usb_configuration(usb_dev_handle *hdl, unsigned int config_index,
-				struct usb_config_descriptor *config)
+void
+ei_x_encode_usb_configuration(ei_x_buff *wb,
+			      usb_dev_handle *hdl, unsigned int config_index,
+			      struct usb_config_descriptor *config)
 {
-  unsigned int n = 0;
-  ETERM *terms[16];
-  terms[n++] = erl_mk_atom("usb_config_descriptor");
-  terms[n++] = erl_mk_uint(config_index);
-  terms[n++] = erl_mk_usb_string(hdl, config->iConfiguration);
-  terms[n++] = erl_mk_usb_interface_tree(hdl, config);
-  RETURN_LOG_ETERM(erl_mk_tuple(terms, n));
+  CHECK_EI(ei_x_encode_tuple_header(wb, 4));
+  CHECK_EI(ei_x_encode_atom(wb, "usb_config_descriptor"));
+  CHECK_EI(ei_x_encode_uint(wb, config_index));
+  ei_x_encode_usb_string(wb, hdl, config->iConfiguration);
+  ei_x_encode_usb_interface_tree(wb, hdl, config);
 }
 
 
-ETERM *erl_mk_usb_configuration_tree(struct usb_device *dev, usb_dev_handle *hdl)
+void
+ei_x_encode_usb_configuration_tree(ei_x_buff *wb,
+				   struct usb_device *dev,
+				   usb_dev_handle *hdl)
 {
-  ETERM **config_terms = erl_malloc(dev->descriptor.bNumConfigurations*sizeof(ETERM *));
   unsigned int config_index;
+  CHECK_EI(ei_x_encode_list_header(wb, dev->descriptor.bNumConfigurations));
   for (config_index = 0; config_index < dev->descriptor.bNumConfigurations; config_index++) {
-    config_terms[config_index] = erl_mk_usb_configuration(hdl, config_index,
-							  &(dev->config[config_index]));
+    ei_x_encode_usb_configuration(wb, hdl, config_index,
+				  &(dev->config[config_index]));
   }
-  RETURN_CLEANUP_ETERM(erl_mk_list(config_terms, config_index),
-		       erl_free(config_terms));
 }
 
 
-ETERM *erl_mk_usb_device_descriptor(usb_dev_handle *hdl, struct usb_device_descriptor *descriptor)
+void
+ei_x_encode_usb_device_descriptor(ei_x_buff *wb,
+				  usb_dev_handle *hdl,
+				  struct usb_device_descriptor *descriptor)
 {
-  unsigned int n = 0;
-  ETERM *terms[16];
-  terms[n++] = erl_mk_atom("usb_device_descriptor");
-  terms[n++] = erl_mk_uint(descriptor->bLength);
-  terms[n++] = erl_mk_uint(descriptor->bDescriptorType);
-  terms[n++] = erl_mk_uint(descriptor->bcdUSB);
-  terms[n++] = erl_mk_uint(descriptor->bDeviceClass);
-  terms[n++] = erl_mk_uint(descriptor->bDeviceSubClass);
-  terms[n++] = erl_mk_uint(descriptor->bDeviceProtocol);
-  terms[n++] = erl_mk_uint(descriptor->bMaxPacketSize0);
-  terms[n++] = erl_mk_uint(descriptor->idVendor);
-  terms[n++] = erl_mk_uint(descriptor->idProduct);
-  terms[n++] = erl_mk_uint(descriptor->bcdDevice);
-  terms[n++] = erl_mk_usb_string(hdl, descriptor->iManufacturer);
-  terms[n++] = erl_mk_usb_string(hdl, descriptor->iProduct);
-  terms[n++] = erl_mk_usb_string(hdl, descriptor->iSerialNumber);
-  terms[n++] = erl_mk_uint(descriptor->bNumConfigurations);
-  RETURN_LOG_ETERM(erl_mk_tuple(terms, n));
+  CHECK_EI(ei_x_encode_tuple_header(wb, 15));
+  CHECK_EI(ei_x_encode_atom(wb, "usb_device_descriptor"));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bLength));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bDescriptorType));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bcdUSB));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bDeviceClass));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bDeviceSubClass));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bDeviceProtocol));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bMaxPacketSize0));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->idVendor));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->idProduct));
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bcdDevice));
+  ei_x_encode_usb_string(wb, hdl, descriptor->iManufacturer);
+  ei_x_encode_usb_string(wb, hdl, descriptor->iProduct);
+  ei_x_encode_usb_string(wb, hdl, descriptor->iSerialNumber);
+  CHECK_EI(ei_x_encode_uint(wb, descriptor->bNumConfigurations));
 }
 
 
-ETERM *erl_mk_usb_device(struct usb_device *dev)
+void
+ei_x_encode_usb_device(ei_x_buff *wb,
+		       struct usb_device *dev)
 {
-  unsigned int n = 0;
-  ETERM *terms[16];
   char sbuf[20];
   usb_dev_handle *hdl = usb_open(dev);
-  fprintf(log, "%04x:%04x\n", 
+  sprintf(sbuf, "%04x:%04x",
 	  dev->descriptor.idVendor, dev->descriptor.idProduct);
-  sprintf(sbuf, "%04x:%04x", 
-	  dev->descriptor.idVendor, dev->descriptor.idProduct);
-  terms[n++] = erl_mk_atom("usb_device");
-  terms[n++] = erl_mk_string(dev->filename);
-  terms[n++] = erl_mk_string(sbuf);
-  terms[n++] = erl_mk_usb_device_descriptor(hdl, &(dev->descriptor));
-  terms[n++] = erl_mk_usb_configuration_tree(dev, hdl);
-  terms[n++] = erl_mk_uint(dev->devnum);
-  fprintf(log, "\n");
-  RETURN_LOG_CLEANUP_ETERM(erl_mk_tuple(terms, n), usb_close(hdl));
+  CHECK_EI(ei_x_encode_tuple_header(wb, 6));
+  CHECK_EI(ei_x_encode_atom(wb, "usb_device"));
+  CHECK_EI(ei_x_encode_string(wb, dev->filename));
+  CHECK_EI(ei_x_encode_string(wb, sbuf));
+  ei_x_encode_usb_device_descriptor(wb, hdl, &(dev->descriptor));
+  ei_x_encode_usb_configuration_tree(wb, dev, hdl);
+  CHECK_EI(ei_x_encode_uint(wb, dev->devnum));
+  usb_close(hdl);
 }
 
 
-ETERM *erl_mk_usb_device_list(struct usb_bus *bus)
+void
+ei_x_encode_usb_device_list(ei_x_buff *wb,
+			    struct usb_bus *bus)
 {
   unsigned int dev_count = 0;
   struct usb_device *dev;
@@ -253,29 +239,27 @@ ETERM *erl_mk_usb_device_list(struct usb_bus *bus)
   }
   if (1) {
     unsigned int dev_index = 0;
-    ETERM **dev_terms = erl_malloc(dev_count*sizeof(ETERM *));
+    CHECK_EI(ei_x_encode_list_header(wb, dev_count));
     for (dev = bus->devices; dev; dev = dev->next, dev_index++) {
-      dev_terms[dev_index] = erl_mk_usb_device(dev);
+      ei_x_encode_usb_device(wb, dev);
     }
-    RETURN_CLEANUP_ETERM(erl_mk_list(dev_terms, dev_index),
-			 erl_free(dev_terms));
-  }  
+  }
 }
 
 
-ETERM *erl_mk_usb_bus(struct usb_bus *bus)
+void
+ei_x_encode_usb_bus(ei_x_buff *wb,
+		    struct usb_bus *bus)
 {
-  unsigned int n = 0;
-  ETERM *terms[10];
-  terms[n++] = erl_mk_atom("usb_bus");
-  terms[n++] = erl_mk_string(bus->dirname);
-  terms[n++] = erl_mk_usb_device_list(bus);
-  fprintf(log, "\n");
-  RETURN_LOG_ETERM(erl_mk_tuple(terms, n));
+  CHECK_EI(ei_x_encode_tuple_header(wb, 3));
+  CHECK_EI(ei_x_encode_atom(wb, "usb_bus"));
+  CHECK_EI(ei_x_encode_string(wb, bus->dirname));
+  ei_x_encode_usb_device_list(wb, bus);
 }
 
 
-ETERM *erl_mk_usb_bus_list()
+void
+ei_x_encode_usb_bus_list(ei_x_buff *wb)
 {
   unsigned int bus_count = 0;
   struct usb_bus *busses;
@@ -288,14 +272,10 @@ ETERM *erl_mk_usb_bus_list()
   }
   if (1) {
     unsigned int bus_index = 0;
-    ETERM **bus_terms = erl_malloc(bus_count*sizeof(ETERM *));
+    CHECK_EI(ei_x_encode_list_header(wb, bus_count));
     for (bus = busses; bus; bus = bus->next, bus_index++) {
-      bus_terms[bus_index] = erl_mk_usb_bus(bus);
-      fprintf(log, "\n");
+      ei_x_encode_usb_bus(wb, bus);
     }
-    fprintf(log, "\n");
-    RETURN_LOG_CLEANUP_ETERM(erl_mk_list(bus_terms, bus_index),
-			     erl_free(bus_terms));
   }
 }
 
@@ -333,26 +313,15 @@ int main() {
 
   fprintf(log, "erlusb.c init done\n");
 
-#define CHECK_EI(call) \
-	do { \
-		int ret = (call); \
-		if (ret != 0) { \
-			fprintf(log, "error running %s: returned %d\n", \
-                                #call, ret); \
-			exit(17); \
-		} \
-	} while (0)
-
   while (read_cmd(rbuf, sizeof(rbuf)) > 0) {
+    ei_x_buff write_buffer;
+    ei_x_buff *wb = &write_buffer;
+    int wb_empty_index;
     int version=-1;
     int index=0;
     int arity=-1;
     int type=-1, size=-1;
     char atom[MAXATOMLEN+1];
-#ifdef OLD_STUFF
-    ETERM *tuplep;
-    ETERM *fnp, *argp;
-#endif /* OLD_STUFF */
     atom[0] = '\0';
     fprintf(log, "read message\n");
     dump_data(log, rbuf, sizeof(rbuf));
@@ -365,63 +334,44 @@ int main() {
     CHECK_EI(ei_decode_atom(rbuf, &index, atom));
     fprintf(log, "decoded atom: index=%d, atom=%s\n", index, atom);
 
-#ifdef OLD_STUFF
-    fnp = erl_element(1, tuplep);
-    argp = erl_element(2, tuplep);
+    CHECK_EI(ei_x_new_with_version(wb));
+    wb_empty_index = wb->index;
 
-    fprintf(log, "checking message: %s\n", ERL_ATOM_PTR(fnp));
+    fprintf(log, "checking message: %s\n", atom);
     if (0) {
       /* nothing */
-    } else if (strncmp(ERL_ATOM_PTR(fnp), "aaa", 3) == 0) {
-      ETERM *trm = erl_mk_usb_bus_list();
-      ENCODE(trm);
-      erl_free_compound(trm);
-    } else if (strncmp(ERL_ATOM_PTR(fnp), "xxx", 3) == 0) {
-      ETERM *str = erl_mk_string("Humpf, Mops, Oerks!");
-      ENCODE(str);
-      erl_free_term(str);
-    } else if (strncmp(ERL_ATOM_PTR(fnp), "yyy", 3) == 0) {
-      ETERM *str = erl_mk_estring("Humpf, Mops, Oerks!", 13);
-      ENCODE(str);
-      erl_free_term(str);
-    } else if (strncmp(ERL_ATOM_PTR(fnp), "fff", 3) == 0) {
-      unsigned int i = 0;
-      ETERM *strs[3];
-      ETERM *lst;
-      strs[i++] = erl_mk_string("Humpf");
-      strs[i++] = erl_mk_string("Mops");
-      strs[i++] = erl_mk_string("Oerks");
-      lst = erl_mk_list(strs, (sizeof(strs)/sizeof(strs[0])));
-      ENCODE(lst);
-      for (i=0; i<(sizeof(strs)/sizeof(strs[0])); i++) {
-	erl_free_term(strs[i]);
-      }
-      erl_free_term(lst);
+    } else if (strncmp(atom, "aaa", 3) == 0) {
+      ei_x_encode_usb_bus_list(wb);
+    } else if (strncmp(atom, "xxx", 3) == 0) {
+      CHECK_EI(ei_x_encode_string(wb, "Humpf, Mops, Oerks!"));
+    } else if (strncmp(atom, "yyy", 3) == 0) {
+      CHECK_EI(ei_x_encode_string_len(wb, "Humpf, Mops, Oerks!", 13));
+    } else if (strncmp(atom, "fff", 3) == 0) {
+      CHECK_EI(ei_x_encode_list_header(wb, 3));
+      CHECK_EI(ei_x_encode_string(wb, "Humpf"));
+      CHECK_EI(ei_x_encode_string(wb, "Mops"));
+      CHECK_EI(ei_x_encode_string(wb, "Oerks"));
+    } else if (strncmp(atom, "close", 5) == 0) {
+      CHECK_EI(ei_x_encode_atom(wb, "closed"));
     } else {
-      ETERM *trm = erl_mk_atom("function_name_error");
-      ENCODE(trm);
-      erl_free_term(trm);
+      CHECK_EI(ei_x_encode_tuple_header(wb, 2));
+      CHECK_EI(ei_x_encode_atom(wb, "unknown_function"));
+      CHECK_EI(ei_x_encode_atom(wb, atom));
     }
-#endif /* OLD_STUFF */
 
-    if (1) {
-      ei_x_buff wb;
-      CHECK_EI(ei_x_new_with_version(&wb));
-      CHECK_EI(ei_x_encode_tuple_header(&wb, 2));
-      CHECK_EI(ei_x_encode_atom(&wb, "moo"));
-      CHECK_EI(ei_x_encode_long(&wb, (long) 13));
+    if (wb->index > wb_empty_index) {
+      CHECK_EI(ei_x_encode_tuple_header(wb, 2));
+      CHECK_EI(ei_x_encode_atom(wb, "moo"));
+      CHECK_EI(ei_x_encode_long(wb, (long) 13));
 
-      fprintf(log, "writing message: wb.buffsz=%d wb.index=%d\n", wb.buffsz, wb.index);
-      write_cmd(wb.buff, wb.index);
+      fprintf(log, "writing message: wb->buffsz=%d wb->index=%d\n", wb->buffsz, wb->index);
+      dump_data(log, wb->buff, wb->index);
+      write_cmd(wb->buff, wb->index);
       fprintf(log, "wrote message\n");
-      CHECK_EI(ei_x_free(&wb));
+    } else {
+      fprintf(log, "no message to write back\n");
     }
-
-#ifdef OLD_STUFF
-    erl_free_compound(tuplep);
-    erl_free_term(fnp);
-    erl_free_term(argp);
-#endif /* OLD_STUFF */
+    CHECK_EI(ei_x_free(wb));
   }
 
   fprintf(log, "erlusb.c finished.\n");
@@ -429,7 +379,7 @@ int main() {
   return 0;
 }
 
-    
+
 int read_cmd(byte *buf, size_t size)
 {
   int len;
@@ -447,7 +397,7 @@ int write_cmd(byte *buf, int len)
 
   li = (len >> 8) & 0xff;
   write_exact(&li, 1);
-  
+
   li = len & 0xff;
   write_exact(&li, 1);
 
