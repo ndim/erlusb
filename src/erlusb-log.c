@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 #include "erlusb-log.h"
+#include "ei.h"
 
 static FILE *logfile = NULL;
 
@@ -69,4 +70,21 @@ void
 log_data(const char *data, const size_t len)
 {
   dump_data(logfile, data, len);
+}
+
+void
+log_buff_term(const char *buff)
+{
+  int index=0;
+  int version=-1;
+  fprintf(logfile, "BUFF: ");
+  if (0 != ei_decode_version(buff, &index, &version)) {
+    fprintf(logfile, "error: could not decode version\n");
+    return;
+  }
+  if (0 != ei_print_term(logfile, buff, &index)) {
+    fprintf(logfile, "error: could not decode term\n");
+    return;
+  }
+  fprintf(logfile, "\n");
 }

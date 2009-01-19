@@ -19,4 +19,8 @@ extern
 void
 log_close();
 
+extern
+void
+log_buff_term(const char *buff);
+
 #endif /* !ERLUSB_LOG_H */

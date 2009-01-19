@@ -1,5 +1,5 @@
 /* erlusb.c - Erlang interface to libusb
- * Copyright (C) 2006 Hans Ulrich Niedermann <hun@n-dimensional.de>
+ * Copyright (C) 2006,2009 Hans Ulrich Niedermann <hun@n-dimensional.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,6 +58,7 @@ int main() {
     atom[0] = '\0';
     log_printf("read message\n");
     log_data(rbuf, readlen);
+    log_buff_term(rbuf);
     CHECK_EI(ei_decode_version(rbuf, &index, &version));
     log_printf("version: %d=0x%x\n", version, version);
     CHECK_EI(ei_get_type(rbuf, &index, &type, &size));
@@ -95,6 +96,7 @@ int main() {
     if (wb->index > wb_empty_index) {
       log_printf("writing message: wb->buffsz=%d wb->index=%d\n", wb->buffsz, wb->index);
       log_data(wb->buff, wb->index);
+      log_buff_term(wb->buff);
       write_cmd(wb->buff, wb->index);
       log_printf("wrote message\n");
     } else {
