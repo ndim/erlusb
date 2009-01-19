@@ -1,3 +1,0 @@
-[submodule "libusb"]
-	path = libusb
-	url = git://projects.reactivated.net/~dsd/libusb.git

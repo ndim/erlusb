@@ -68,11 +68,6 @@ tests/Makefile
 tests/atlocal
 ])
 
-# Subpackages
-
-if test -d "$srcdir/libusb"; then
-    AC_CONFIG_SUBDIRS([libusb])
-fi
 
 # Output files
 AC_CONFIG_FILES([
@@ -83,4 +78,4 @@ AC_OUTPUT
 echo "erlusb compile option summary:
    libusb-0.1: $have_libusb
    libusb-1.0: $have_libusb_10
-Please check this meets your expectations."
+Please verify that this meets your expectations."
