@@ -300,12 +300,36 @@ ETERM *erl_mk_usb_bus_list()
 }
 
 
+void dump_data(FILE *fp, const char *data, size_t len)
+{
+   size_t i;
+   for (i=0; i<len; i++) {
+     switch (i&15) {
+     case 0:
+       fprintf(fp, "%08x ", i);
+       break;
+     case 8:
+       fprintf(fp, " ");
+       break;
+     default:
+       break;
+     }
+     fprintf(fp, " %02x", 0xff&data[i]);
+     if (((i&15) == 15) || ((i+1) == len)) {
+       fprintf(fp, "\n");
+     }
+   }
+}
+
+
 int main() {
   byte rbuf[200];
 
-  int wbuf_size = 40;
+  int wbuf_size = 400;
   byte *wbuf = erl_malloc(wbuf_size);
+#ifdef OLD_STUFF
   int wbuf_len = 0;
+#endif /* OLD_STUFF */
 
   log = fopen("erlusb.log", "a");
   setvbuf(log, NULL, _IONBF, 0);
@@ -315,14 +339,41 @@ int main() {
 
   fprintf(log, "erlusb.c init done\n");
 
+#define CHECK_EI(call) \
+	do { \
+		int ret = (call); \
+		if (ret != 0) { \
+			fprintf(log, "error running %s: returned %d\n", #call, ret); \
+			exit(17); \
+		} \
+	} while (0)
+
   while (read_cmd(rbuf, sizeof(rbuf)) > 0) {
+    int version=-1;
+    int index=0;
+    int arity=-1;
+    int type=-1, size=-1;
+    char atom[MAXATOMLEN+1];
+#ifdef OLD_STUFF
     ETERM *tuplep;
     ETERM *fnp, *argp;
+#endif /* OLD_STUFF */
+    atom[0] = '\0';
     fprintf(log, "read message\n");
-    tuplep = erl_decode(rbuf);
+    dump_data(log, rbuf, sizeof(rbuf));
+    CHECK_EI(ei_decode_version(rbuf, &index, &version));
+    fprintf(log, "version: %d=0x%x\n", version, version);
+    CHECK_EI(ei_get_type(rbuf, &index, &type, &size));
+    fprintf(log, "type of received message: index=%d, type=%d=0x%x='%c', size=%d\n", index, type, type, type, size);
+    CHECK_EI(ei_decode_tuple_header(rbuf, &index, &arity));
+    fprintf(log, "decoded tuple header: index=%d, arity=%d\n", index, arity);
+    CHECK_EI(ei_decode_atom(rbuf, &index, atom));
+    fprintf(log, "decoded atom: index=%d, atom=%s\n", index, atom);
+
+#ifdef OLD_STUFF
     fnp = erl_element(1, tuplep);
     argp = erl_element(2, tuplep);
-    
+
     fprintf(log, "checking message: %s\n", ERL_ATOM_PTR(fnp));
     if (0) {
       /* nothing */
@@ -356,14 +407,25 @@ int main() {
       ENCODE(trm);
       erl_free_term(trm);
     }
+#endif /* OLD_STUFF */
 
-    fprintf(log, "writing message\n");
-    write_cmd(wbuf, wbuf_len);
-    fprintf(log, "wrote message\n");
+    if (1) {
+      int wi = 0;
+      ei_encode_version(wbuf, &wi);
+      ei_encode_tuple_header(wbuf, &wi, 2);
+      ei_encode_atom(wbuf, &wi, "moo");
+      ei_encode_long(wbuf, &wi, (long) 13);
 
+      fprintf(log, "writing message: wi=%d\n", wi);
+      write_cmd(wbuf, wi);
+      fprintf(log, "wrote message\n");
+    }
+
+#ifdef OLD_STUFF
     erl_free_compound(tuplep);
     erl_free_term(fnp);
     erl_free_term(argp);
+#endif /* OLD_STUFF */
   }
 
   fprintf(log, "erlusb.c finished.\n");
