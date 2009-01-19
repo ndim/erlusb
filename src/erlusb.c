@@ -77,19 +77,19 @@ int main() {
     log_printf("checking message: %s\n", atom);
     if (0) {
       /* nothing */
-    } else if (strncmp(atom, "aaa", 3) == 0) {
+    } else if (strncmp(atom, "usb_bus_list", 13) == 0) {
       ei_x_encode_usb_bus_list(wb);
-    } else if (strncmp(atom, "xxx", 3) == 0) {
+    } else if (strncmp(atom, "test-1", 7) == 0) {
       CHECK_EI(ei_x_encode_string(wb, "Humpf, Mops, Oerks!"));
-    } else if (strncmp(atom, "yyy", 3) == 0) {
+    } else if (strncmp(atom, "test-2", 7) == 0) {
       CHECK_EI(ei_x_encode_string_len(wb, "Humpf, Mops, Oerks!", 13));
-    } else if (strncmp(atom, "fff", 3) == 0) {
+    } else if (strncmp(atom, "test-3", 7) == 0) {
       CHECK_EI(ei_x_encode_list_header(wb, 3));
       CHECK_EI(ei_x_encode_string(wb, "Humpf"));
       CHECK_EI(ei_x_encode_string(wb, "Mops"));
       CHECK_EI(ei_x_encode_string(wb, "Oerks"));
       CHECK_EI(ei_x_encode_empty_list(wb));
-    } else if (strncmp(atom, "close", 5) == 0) {
+    } else if (strncmp(atom, "close", 6) == 0) {
       CHECK_EI(ei_x_encode_atom(wb, "closed"));
     } else {
       CHECK_EI(ei_x_encode_tuple_header(wb, 2));

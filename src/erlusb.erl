@@ -17,7 +17,8 @@
 
 -module(erlusb).
 -export([start/1, stop/0, init/1]).
--export([foo/1, bar/1, aaa/0, xxx/0, xxxyyy/0]).
+-export([usb_bus_list/0]).
+-export([ei_tests/0]).
 -include("erlusb.hrl").
 
 start(ExtPrg) ->
@@ -25,17 +26,16 @@ start(ExtPrg) ->
 stop() ->
     erlusb ! stop.
 
-foo(X) ->
-    call_port({foo, X}).
-bar(Y) ->
-    call_port({bar, Y}).
-xxx() ->
-    call_port({xxx}).
-xxxyyy() ->
-    {call_port({xxxyyy}),
-     call_port({fff})}.
-aaa() ->
-    call_port({aaa}).
+ei_tests() ->
+    [ {Atom,Result}={Atom,call_port({Atom})}
+      || {Atom, Result} <-
+	     [{'test-1', "Humpf, Mops, Oerks!"},
+	      {'test-2', "Humpf, Mops, "},
+	      {'test-3', ["Humpf", "Mops", "Oerks"]},
+	      {'test-u', {'unknown_function', 'test-u'}}
+	     ]].
+usb_bus_list() ->
+    call_port({usb_bus_list}).
 
 call_port(Msg) ->
     erlusb ! {call, self(), Msg},
