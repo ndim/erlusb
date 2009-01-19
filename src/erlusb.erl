@@ -46,7 +46,15 @@ call_port(Msg) ->
 init(ExtPrg) ->
     register(erlusb, self()),
     process_flag(trap_exit, true),
-    Port = open_port({spawn, ExtPrg}, [{packet, 2}, binary]),
+    Port = open_port({spawn, ExtPrg},
+		     [
+		      %% {cd, "/path/to/wherever"},
+		      %% {env, [{'PATH'...}]},
+		      use_stdio,
+		      {packet, 2},
+		      hide,
+		      binary
+		     ]),
     loop(Port).
 
 loop(Port) ->
@@ -60,8 +68,10 @@ loop(Port) ->
 	    loop(Port);
 	stop ->
 	    Port ! {self(), close},
+	    io:format("Waiting for close ack~n", []),
 	    receive
 		{Port, closed} ->
+		    io:format("Received data: ~p~n", [closed]),
 		    exit(normal)
 	    end;
 	{'EXIT', Port, _Reason} ->
