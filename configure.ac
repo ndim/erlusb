@@ -56,6 +56,12 @@ tests/Makefile
 tests/atlocal
 ])
 
+# Subpackages
+
+if test -d "$srcdir/libusb"; then
+    AC_CONFIG_SUBDIRS([libusb])
+fi
+
 # Output files
 AC_CONFIG_FILES([
 Makefile
