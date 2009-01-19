@@ -63,7 +63,23 @@ loop(Port) ->
 	    Port ! {self(), {command, term_to_binary(Msg)}},
 	    receive
 		{Port, {data, Data}} ->
-		    Caller ! {erlusb, binary_to_term(Data)}
+		    io:format("Received data: ~p~n", [Data]),
+		    Term = try
+			       binary_to_term(Data)
+			   catch
+			       error:badarg ->
+				   io:format("ERROR: "
+					     "Could not convert invalid data to term~n",
+					     []),
+				   spawn(fun() ->
+						 receive
+						     after 1000 ->
+							 stop()
+						 end
+					 end),
+				   invalid_data
+			   end,
+		    Caller ! {erlusb, Term}
 	    end,
 	    loop(Port);
 	stop ->
@@ -71,7 +87,7 @@ loop(Port) ->
 	    io:format("Waiting for close ack~n", []),
 	    receive
 		{Port, closed} ->
-		    io:format("Received data: ~p~n", [closed]),
+		    io:format("Received ~p~n", [closed]),
 		    exit(normal)
 	    end;
 	{'EXIT', Port, _Reason} ->
