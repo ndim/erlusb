@@ -15,7 +15,10 @@ erlusb_libusb0_SOURCES  = src/erlusb-main.c
 erlusb_libusb0_SOURCES += src/erlusb-ei.c src/erlusb-ei.h
 erlusb_libusb0_SOURCES += src/erlusb-log.c src/erlusb-log.h
 erlusb_libusb0_SOURCES += src/driver-libusb0.c src/driver.h
-erlusb_libusb0_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) $(LIBUSB_CFLAGS) $(CPPFLAGS)
+# libusb-0.1's usb.h does not work with --std=c99
+# erlusb-log.c does not work with --std=c89 (requires va_copy)
+# so gnu89 fits the bill
+erlusb_libusb0_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) --std=gnu89 $(LIBUSB_CFLAGS) $(CPPFLAGS)
 erlusb_libusb0_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_LIBS)
 erlusb_libusb0_LDFLAGS = -lpthread
 endif
@@ -31,7 +34,9 @@ erlusb_libusb1_SOURCES  = src/erlusb-main.c
 erlusb_libusb1_SOURCES += src/erlusb-ei.c src/erlusb-ei.h
 erlusb_libusb1_SOURCES += src/erlusb-log.c src/erlusb-log.h
 erlusb_libusb1_SOURCES += src/driver-libusb1.c src/driver.h
-erlusb_libusb1_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) -std=c99 $(LIBUSB_10_CFLAGS) $(CPPFLAGS)
+# libusb-1.0's usb.h works with neither --std=c90 nor --std=c99 :-(
+# Using --std=c99 with locally patched libusb-1.0.
+erlusb_libusb1_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) --std=c99 $(LIBUSB_10_CFLAGS) $(CPPFLAGS)
 erlusb_libusb1_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_10_LIBS)
 erlusb_libusb1_LDFLAGS = -lpthread
 endif

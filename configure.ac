@@ -14,9 +14,13 @@ AM_INIT_AUTOMAKE([
 
 # Checks for programs.
 AC_PROG_CC
+
+dnl We potentially need libtool to link against an uninstalled version
+dnl of libusb-1.0. None of the code is in C++ or Fortran, though.
 CXX=false
 F77=false
 AC_PROG_LIBTOOL
+
 AM_PROG_CC_C_O
 AC_ERLANG_NEED_ERLC
 AC_ERLANG_NEED_ERL
@@ -75,6 +79,7 @@ Makefile
 ])
 AC_OUTPUT
 
+dnl Be nice to user.
 echo "erlusb compile option summary:
    libusb-0.1: $have_libusb
    libusb-1.0: $have_libusb_10
