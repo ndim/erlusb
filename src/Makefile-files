@@ -51,3 +51,11 @@ EXTRA_DIST += src/erlusb.erl src/erlusb.hrl
 src/erlusb.beam: $(srcdir)/src/erlusb.erl $(srcdir)/src/erlusb.hrl
 	mkdir -p src
 	$(ERLC) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o src $<
+
+
+erlpkgebeam_DATA += src/garmin.beam
+CLEANFILES += src/garmin.beam
+EXTRA_DIST += src/garmin.erl
+src/garmin.beam: $(srcdir)/src/garmin.erl $(srcdir)/src/erlusb.hrl
+	mkdir -p src
+	$(ERLC) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o src $<
