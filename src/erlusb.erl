@@ -16,15 +16,23 @@
 % Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 -module(erlusb).
--export([start/1, stop/0, init/1]).
+
+%%% public API
+-export([start/1, stop/0]).
 -export([usb_bus_list/0]).
+
+%%% internal functions
+-export([init/1, loop/1]).
 -export([ei_tests/0]).
+
 -include("erlusb.hrl").
+
+-record(state, {port}).
 
 start(ExtPrg) ->
     spawn(?MODULE, init, [ExtPrg]).
 stop() ->
-    erlusb ! stop.
+    ?MODULE ! stop.
 
 ei_tests() ->
     [ {Atom,Result}={Atom,call_port({Atom})}
@@ -38,14 +46,14 @@ usb_bus_list() ->
     call_port({usb_bus_list}).
 
 call_port(Msg) ->
-    erlusb ! {call, self(), Msg},
+    ?MODULE ! {call, self(), Msg},
     receive
-	{erlusb, Result} ->
+	{?MODULE, Result} ->
 	    Result
     end.
 
 init(ExtPrg) ->
-    register(erlusb, self()),
+    register(?MODULE, self()),
     process_flag(trap_exit, true),
     Port = open_port({spawn, ExtPrg},
 		     [
@@ -56,18 +64,18 @@ init(ExtPrg) ->
 		      hide,
 		      binary
 		     ]),
-    loop(Port).
+    loop(#state{port=Port}).
 
-loop(Port) ->
+loop(#state{port=Port} = State) ->
     receive
 	{call, Caller, Msg} ->
 	    Port ! {self(), {command, term_to_binary(Msg)}},
 	    receive
 		{Port, {data, Data}} ->
 		    io:format("Received data for ~p: ~p~n", [Msg, Data]),
-		    Caller ! {erlusb, binary_to_term(Data)}
+		    Caller ! {?MODULE, binary_to_term(Data)}
 	    end,
-	    loop(Port);
+	    loop(State);
 	stop ->
 	    Port ! {self(), close},
 	    io:format("Waiting for close ack~n", []),
