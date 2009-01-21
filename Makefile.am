@@ -12,6 +12,11 @@ CLEANFILES =
 
 TESTS_ENVIRONMENT = env srcdir=$(srcdir) ERL=$(ERL)
 
+# package version from git stuff
+EXTRA_DIST += GNUmakefile.in
+include build-helpers/package-version.mk
+
+# source code and tests
 include test/usb/Makefile-files
 include test/erl-1/Makefile-files
 include test/erl-2/Makefile-files

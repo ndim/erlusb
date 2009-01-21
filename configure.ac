@@ -1,5 +1,8 @@
 AC_PREREQ(2.61) dnl -*- Autoconf -*-
-AC_INIT([Erlang USB interface], [0.3], [hun@n-dimensional.de], [erlusb])
+AC_INIT([Erlang USB interface],
+        [m4_esyscmd([./build-helpers/package-version . version-stamp])],
+        [hun@n-dimensional.de],
+        [erlusb])
 AC_CONFIG_SRCDIR([src/erlusb-main.c])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([auxdir])
@@ -7,7 +10,7 @@ AM_INIT_AUTOMAKE([
     -Wall -Werror
     1.10
     dist-bzip2 dist-lzma dist-zip
-    check-news foreign
+    foreign
     filename-length-max=99
     subdir-objects
 ])
@@ -65,18 +68,17 @@ AM_CONDITIONAL([HAVE_LIBUSB_10], [test "x$have_libusb_10" = "xyes"])
 
 # Checks for library functions.
 
+# Make sure the versions are always accurate
+AC_CONFIG_FILES([GNUmakefile])
+
 # Initialize the test suite
 AC_CONFIG_TESTDIR([tests])
-AC_CONFIG_FILES([
-tests/Makefile
-tests/atlocal
-])
+AC_CONFIG_FILES([tests/Makefile])
+AC_CONFIG_FILES([tests/atlocal])
 
 
 # Output files
-AC_CONFIG_FILES([
-Makefile
-])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 dnl Be nice to user.

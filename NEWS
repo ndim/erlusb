@@ -1,3 +1,6 @@
+erlusb 0.3.*
+  * Rudimentary libusb-1.0 support.
+
 erlusb 0.3
   * Update stuff to work in git managed source tree.
 

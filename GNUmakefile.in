@@ -1,0 +1,15 @@
+include Makefile
+
+AUTORECONF ?= autoreconf
+AUTORECONF_OPTS ?= -vis
+
+git_version := $(shell $(top_srcdir)/build-helpers/package-version $(top_srcdir) version-stamp)
+ifneq ($(PACKAGE_VERSION),$(git_version))
+$(info autoconf and git versions do not match: $(PACKAGE_VERSION) vs $(git_version))
+$(info Removing autom4te.cache and related files and re-running autoreconf)
+dummy1 := $(shell rm -rf $(top_srcdir)/autom4te.cache)
+dummy2 := $(shell rm -f $(top_srcdir)/test/package.m4 $(top_srcdir)/test/testsuite)
+dummy3 := $(shell $(AUTORECONF) $(AUTORECONF_OPTS) $(top_srcdir))
+endif
+
+# vim: syntax=make
