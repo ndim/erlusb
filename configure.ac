@@ -76,6 +76,10 @@ AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_FILES([tests/Makefile])
 AC_CONFIG_FILES([tests/atlocal])
 
+# Subpackages
+if test -d "$srcdir/eunit"; then
+  AC_CONFIG_SUBDIRS([eunit])
+fi
 
 # Output files
 AC_CONFIG_FILES([Makefile])

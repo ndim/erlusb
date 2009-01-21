@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-SUBDIRS = . tests
+SUBDIRS = @subdirs@ . tests
 
 bin_PROGRAMS =
 check_PROGRAMS =
