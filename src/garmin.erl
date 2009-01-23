@@ -56,9 +56,7 @@ loop(#state{usb=USB, dev=Dev} = State) ->
 	    loop(State);
 	stop ->
 	    io:format("Received ~p~n", [stop]),
-	    exit(normal);
-	{'EXIT', Port, _Reason} ->
-	    exit(port_terminated)
+	    exit(normal)
     end.
 
 
