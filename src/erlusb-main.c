@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include <erl_interface.h>
 #include <ei.h>
@@ -37,7 +38,7 @@ int write_cmd(byte *buf, int len);
 
 
 int main() {
-  byte rbuf[200];
+  byte rbuf[1<<16];
   int readlen = -1;
 
   log_init();
@@ -75,6 +76,20 @@ int main() {
     log_printf("checking message: %s\n", atom);
     if (0) {
       /* nothing */
+    } else if (strncmp(atom, "send_packet", 12) == 0) {
+      long endpoint = -1;
+      int type;
+      int size;
+      long len;
+      void *packet;
+      CHECK_EI(ei_decode_long(rbuf, &index, &endpoint));
+      CHECK_EI(ei_get_type(rbuf, &index, &type, &size));
+      assert(type == ERL_BINARY_EXT);
+      packet = malloc(size);
+      assert(packet != NULL);
+      CHECK_EI(ei_decode_binary(rbuf, &index, packet, &len));
+      ei_x_encode_send_packet(wb, packet, len);
+      free(packet);
     } else if (strncmp(atom, "usb_bus_list", 13) == 0) {
       ei_x_encode_all_devices(wb);
     } else if (strncmp(atom, "test-1", 7) == 0) {

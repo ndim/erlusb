@@ -34,5 +34,10 @@ extern
 void
 ei_x_encode_all_devices(ei_x_buff *wb);
 
-#endif /* !DRIVER_H */
+extern
+void
+ei_x_encode_send_packet(ei_x_buff *wb,
+                        void *packet,
+                        long len);
 
+#endif /* !DRIVER_H */

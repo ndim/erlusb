@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <assert.h>
+
 #include "driver.h"
 
 #include <usb.h>
@@ -260,4 +262,26 @@ void
 ei_x_encode_all_devices(ei_x_buff *wb)
 {
   ei_x_encode_usb_bus_list(wb);
+}
+
+
+void
+ei_x_encode_send_packet(ei_x_buff *wb,
+                        void *packet,
+			long len)
+{
+  struct usb_device *device = NULL;
+  usb_dev_handle *devhdl = NULL;
+  int configuration = 0;
+  assert(device);
+  devhdl = usb_open(device);
+  assert(devhdl);
+  assert(0 <= usb_claim_interface(devhdl, configuration));
+  /* FIXME: eventually call usb_release_interface as well */
+  /* FIXME: Actually send the packet */
+  packet = packet;
+  len = len;
+  ei_x_encode_tuple_header(wb, 2);
+  ei_x_encode_atom(wb, "not_implemented_yet");
+  ei_x_encode_atom(wb, "send_packet");
 }

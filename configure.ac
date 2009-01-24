@@ -65,6 +65,8 @@ AM_CONDITIONAL([HAVE_LIBUSB_10], [test "x$have_libusb_10" = "xyes"])
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
+dnl FIXME: check that sizeof(long) >= sizeof(int)
+dnl FIXME: check that sizeof(long) >= sizeof(size_t)
 
 # Checks for library functions.
 

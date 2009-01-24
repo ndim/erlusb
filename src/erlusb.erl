@@ -20,6 +20,7 @@
 %%% public API
 -export([start/1, stop/0]).
 -export([usb_bus_list/0]).
+-export([send_packet/2]).
 
 %%% internal functions
 -export([init/1, loop/1]).
@@ -45,6 +46,9 @@ ei_tests() ->
 usb_bus_list() ->
     call_port({usb_bus_list}).
 
+send_packet(EndPoint, Payload) when is_integer(EndPoint), is_binary(Payload) ->
+    call_port({send_packet, EndPoint, Payload}).
+
 call_port(Msg) ->
     ?MODULE ! {call, self(), Msg},
     receive
@@ -68,6 +72,9 @@ init(ExtPrg) ->
 
 loop(#state{port=Port} = State) ->
     receive
+	{Port, {data, Data}} ->
+	    io:format("Received unsolicited data from port: ~p~n", [Data]),
+	    loop(State);
 	{call, Caller, Msg} ->
 	    Port ! {self(), {command, term_to_binary(Msg)}},
 	    receive

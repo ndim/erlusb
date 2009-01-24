@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <assert.h>
+
 #include "driver.h"
 
 #include <libusb.h>
@@ -125,4 +127,26 @@ ei_x_encode_all_devices(ei_x_buff *wb)
     ei_x_encode_empty_list(wb);
     libusb_free_device_list(list, 1);
   }
+}
+
+
+void
+ei_x_encode_send_packet(ei_x_buff *wb,
+                        void *packet,
+			long len)
+{
+  struct libusb_device *device = NULL;
+  libusb_device_handle *devhdl = NULL;
+  int configuration = 0;
+  assert(device);
+  assert(0 <= libusb_open(device, &devhdl));
+  assert(devhdl);
+  assert(0 <= libusb_claim_interface(devhdl, configuration));
+  /* FIXME: eventually call libusb_release_interface as well */
+  /* FIXME: Actually send the packet */
+  packet = packet;
+  len = len;
+  ei_x_encode_tuple_header(wb, 2);
+  ei_x_encode_atom(wb, "not_implemented_yet");
+  ei_x_encode_atom(wb, "send_packet");
 }

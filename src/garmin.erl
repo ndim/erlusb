@@ -45,9 +45,20 @@ init(DevName) ->
     process_flag(trap_exit, true),
     USB = erlusb:start([]),
     Dev = erlusb:device(DevName),
+    StartSessionPacket = % cf. Garmin Table 3 - USB Packet Format
+	<<
+	 0, % USB Protocol Layer
+	 0,0,0, % reserved, 0
+	 5:16, % Pid_Start_Session
+	 0,0, % reserved, 0
+	 0:32 % data size
+	 % no data
+	 >>,
+    %% FIXME: transmit on bulk out pipe
+    erlusb:send_packet(13, StartSessionPacket),
     loop(#state{usb=USB, dev=Dev}).
 
-loop(#state{usb=USB, dev=Dev} = State) ->
+loop(#state{usb=_USB, dev=_Dev} = State) ->
     receive
 	{call, Caller, Msg} ->
 	    io:format("garmin:loop received msg from caller: ~p ~p~n",
