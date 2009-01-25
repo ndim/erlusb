@@ -37,14 +37,31 @@ int read_cmd(byte *buf, size_t size);
 int write_cmd(byte *buf, int len);
 
 
+#define DRIVER(fun, call)				\
+  do {							\
+    if (driver.fun) {					\
+      driver.call;					\
+    } else {						\
+      ei_x_encode_tuple_header(wb, 3);			\
+      ei_x_encode_atom(wb, "driver");			\
+      ei_x_encode_atom(wb, "unsupported_function");	\
+      ei_x_encode_atom(wb, atom);			\
+    }							\
+  } while (0)
+
+
 int main() {
   byte rbuf[1<<16];
   int readlen = -1;
 
   log_init();
-  driver_init();
 
-  log_printf("erlusb.c init done\n");
+  assert(driver.name);
+  assert(driver.init);
+  assert(driver.exit);
+  driver.init();
+
+  log_printf("erlusb.c init done, using driver %s\n", driver.name);
 
   while ((readlen = read_cmd(rbuf, sizeof(rbuf))) > 0) {
     ei_x_buff write_buffer;
@@ -88,10 +105,14 @@ int main() {
       packet = malloc(size);
       assert(packet != NULL);
       CHECK_EI(ei_decode_binary(rbuf, &index, packet, &len));
-      ei_x_encode_send_packet(wb, packet, len);
+      DRIVER(send_packet, send_packet(wb, packet, len));
       free(packet);
     } else if (strncmp(atom, "usb_bus_list", 13) == 0) {
-      ei_x_encode_all_devices(wb);
+      DRIVER(get_device_list, get_device_list(wb));
+    } else if (strncmp(atom, "test-0", 7) == 0) {
+      CHECK_EI(ei_x_encode_tuple_header(wb, 2));
+      CHECK_EI(ei_x_encode_atom(wb, "driver"));
+      CHECK_EI(ei_x_encode_atom(wb, driver.name));
     } else if (strncmp(atom, "test-1", 7) == 0) {
       CHECK_EI(ei_x_encode_string(wb, "Humpf, Mops, Oerks!"));
     } else if (strncmp(atom, "test-2", 7) == 0) {
@@ -130,7 +151,7 @@ int main() {
     CHECK_EI(ei_x_free(wb));
   }
 
-  driver_exit();
+  driver.exit();
   log_close();
   return 0;
 }

@@ -22,22 +22,16 @@
 #include <erl_interface.h>
 #include <ei.h>
 
-extern
-void
-driver_init();
+typedef struct {
+  char *name;
+  void (*init)(void);
+  void (*exit)(void);
+  void (*get_device_list)(ei_x_buff *wb);
+  void (*send_packet)(ei_x_buff *wb,
+		      void *packet,
+		      long len);
+} erlusb_driver_t;
 
-extern
-void
-driver_exit();
-
-extern
-void
-ei_x_encode_all_devices(ei_x_buff *wb);
-
-extern
-void
-ei_x_encode_send_packet(ei_x_buff *wb,
-                        void *packet,
-                        long len);
+extern erlusb_driver_t driver;
 
 #endif /* !DRIVER_H */

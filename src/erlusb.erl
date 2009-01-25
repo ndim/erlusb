@@ -36,6 +36,8 @@ stop() ->
     ?MODULE ! stop.
 
 ei_tests() ->
+    [ {'test-0', {'driver', _}} = {'test-0', call_port('test-0')} ]
+	++
     [ {Atom,Result}={Atom,call_port({Atom})}
       || {Atom, Result} <-
 	     [{'test-1', "Humpf, Mops, Oerks!"},

@@ -28,6 +28,7 @@
 #include "erlusb-ei.h"
 
 
+static
 void
 driver_init()
 {
@@ -35,12 +36,14 @@ driver_init()
 }
 
 
+static
 void
 driver_exit()
 {
 }
 
 
+static
 void
 ei_x_encode_usb_string(ei_x_buff *wb,
 		       usb_dev_handle *hdl, u_int8_t index)
@@ -57,6 +60,7 @@ ei_x_encode_usb_string(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_endpoint(ei_x_buff *wb,
 			 struct usb_endpoint_descriptor *epd)
@@ -74,6 +78,7 @@ ei_x_encode_usb_endpoint(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_endpoint_list(ei_x_buff *wb,
 			      struct usb_interface_descriptor *ifd)
@@ -87,6 +92,7 @@ ei_x_encode_usb_endpoint_list(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_interface_descriptor(ei_x_buff *wb,
 				     usb_dev_handle *hdl,
@@ -107,6 +113,7 @@ ei_x_encode_usb_interface_descriptor(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_altsettings(ei_x_buff *wb,
 			    usb_dev_handle *hdl,
@@ -122,6 +129,7 @@ ei_x_encode_usb_altsettings(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_interface(ei_x_buff *wb,
 			  usb_dev_handle *hdl,
@@ -133,6 +141,7 @@ ei_x_encode_usb_interface(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_interface_tree(ei_x_buff *wb,
 			       usb_dev_handle *hdl,
@@ -147,6 +156,7 @@ ei_x_encode_usb_interface_tree(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_configuration(ei_x_buff *wb,
 			      usb_dev_handle *hdl,
@@ -161,6 +171,7 @@ ei_x_encode_usb_configuration(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_configuration_tree(ei_x_buff *wb,
 				   struct usb_device *dev,
@@ -175,6 +186,7 @@ ei_x_encode_usb_configuration_tree(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_device_descriptor(ei_x_buff *wb,
 				  usb_dev_handle *hdl,
@@ -199,6 +211,7 @@ ei_x_encode_usb_device_descriptor(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_device(ei_x_buff *wb,
 		       struct usb_device *dev)
@@ -218,6 +231,7 @@ ei_x_encode_usb_device(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_device_list(ei_x_buff *wb,
 			    struct usb_bus *bus)
@@ -231,6 +245,7 @@ ei_x_encode_usb_device_list(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_bus(ei_x_buff *wb,
 		    struct usb_bus *bus)
@@ -242,6 +257,7 @@ ei_x_encode_usb_bus(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_usb_bus_list(ei_x_buff *wb)
 {
@@ -258,6 +274,7 @@ ei_x_encode_usb_bus_list(ei_x_buff *wb)
 }
 
 
+static
 void
 ei_x_encode_all_devices(ei_x_buff *wb)
 {
@@ -265,6 +282,7 @@ ei_x_encode_all_devices(ei_x_buff *wb)
 }
 
 
+static
 void
 ei_x_encode_send_packet(ei_x_buff *wb,
                         void *packet,
@@ -285,3 +303,11 @@ ei_x_encode_send_packet(ei_x_buff *wb,
   ei_x_encode_atom(wb, "not_implemented_yet");
   ei_x_encode_atom(wb, "send_packet");
 }
+
+erlusb_driver_t driver = {
+  /* .name = */ "libusb-0.1",
+  /* .init = */ driver_init,
+  /* .exit = */ driver_exit,
+  /* .get_device_list = */ ei_x_encode_all_devices,
+  /* .send_packet = */ ei_x_encode_send_packet
+};

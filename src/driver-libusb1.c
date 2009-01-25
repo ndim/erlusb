@@ -30,6 +30,8 @@
 
 static libusb_context *context = NULL;
 
+
+static
 void
 driver_init()
 {
@@ -37,6 +39,7 @@ driver_init()
 }
 
 
+static
 void
 driver_exit()
 {
@@ -45,6 +48,7 @@ driver_exit()
 }
 
 
+static
 void
 ei_x_encode_usb_string(ei_x_buff *wb,
 		       /* libusb_device_handle *hdl, */
@@ -66,6 +70,7 @@ ei_x_encode_usb_string(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_device(ei_x_buff *wb,
 		   libusb_device *dev)
@@ -108,6 +113,7 @@ ei_x_encode_device(ei_x_buff *wb,
 }
 
 
+static
 void
 ei_x_encode_all_devices(ei_x_buff *wb)
 {
@@ -130,6 +136,7 @@ ei_x_encode_all_devices(ei_x_buff *wb)
 }
 
 
+static
 void
 ei_x_encode_send_packet(ei_x_buff *wb,
                         void *packet,
@@ -150,3 +157,12 @@ ei_x_encode_send_packet(ei_x_buff *wb,
   ei_x_encode_atom(wb, "not_implemented_yet");
   ei_x_encode_atom(wb, "send_packet");
 }
+
+
+erlusb_driver_t driver = {
+  .name = "libusb-1.0",
+  .init = driver_init,
+  .exit = driver_exit,
+  .get_device_list = ei_x_encode_all_devices,
+  .send_packet = ei_x_encode_send_packet
+};
