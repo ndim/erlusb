@@ -42,6 +42,14 @@ erlusb_libusb1_LDFLAGS = -lpthread
 endif
 
 
+if HAVE_LIBUSB_10
+noinst_PROGRAMS += gps-comm-test
+gps_comm_test_SOURCES = src/gps-comm-test.c
+gps_comm_test_LDADD   = $(LIBUSB_10_LIBS)
+gps_comm_test_CFLAGS  = $(AM_CFLAGS) --std=c99 $(LIBUSB_10_CFLAGS)
+endif
+
+
 erlpkginclude_HEADERS += src/erlusb.hrl
 erlpkgebeam_DATA += src/erlusb.beam
 CLEANFILES += src/erlusb.beam erlusb.log erlusb.vlog

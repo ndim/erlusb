@@ -6,6 +6,7 @@ bin_PROGRAMS =
 check_PROGRAMS =
 check_DATA =
 check_SCRIPTS =
+noinst_PROGRAMS =
 TESTS =
 EXTRA_DIST =
 CLEANFILES =
