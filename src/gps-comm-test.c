@@ -18,6 +18,30 @@ int main()
 
   printf("dev_hdl=%p claim=%d\n", (void *)dev_handle, claim);
 
+  char packet[12] = {
+    0,
+    0,0,0,
+    5,0,
+    0,0,
+    0,0,0,0
+  };
+  int transferred = -1;
+  int bt = libusb_bulk_transfer(dev_handle,
+				0x02,
+				packet, sizeof(packet),
+				&transferred,
+				3000);
+  printf("%d = libusb_bulk_transfer(...)\n", bt);
+
+  /* so far, everything is on track. but we will not receive anything */
+
+  int it = libusb_interrupt_transfer(dev_handle,
+				      0x81,
+				      packet, sizeof(packet),
+				      &transferred,
+				      3000);
+  printf("%d = libusb_interrupt_transfer(...)\n", it);
+
   int release = libusb_release_interface(dev_handle, 0);
   assert(0 == release);
 
