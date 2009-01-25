@@ -48,6 +48,7 @@ AC_ERLANG_SUBST_INSTALL_LIB_SUBDIR([erlusb], [${PACKAGE_VERSION}])
 AC_SUBST([erlpkgebeamdir],   ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/ebin"])
 AC_SUBST([erlpkgincludedir], ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/include"])
 AC_SUBST([erlpkgbindir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/bin"])
+AC_SUBST([erlpkgsrcdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/src"])
 AC_SUBST([erlpkglibdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/lib"])
 
 AC_SUBST([AM_ERLCFLAGS], [-v])

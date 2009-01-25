@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 
-bin_PROGRAMS += test-erl
-check_PROGRAMS +=
+noinst_PROGRAMS += test-erl
+check_PROGRAMS  += test-erl
 
 EXTRA_DIST += test/erl-1/test-erl.sh test/erl-1/test-erl.cmds
 
