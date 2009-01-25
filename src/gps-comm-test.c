@@ -5,7 +5,8 @@
 
 int main()
 {
-  libusb_init(NULL);
+  int init = libusb_init(NULL);
+  assert(0 == init);
   libusb_set_debug(NULL, 3);
 
   libusb_device_handle *dev_handle = /* Garmin GPSmap (various models) */
@@ -13,12 +14,12 @@ int main()
   assert(dev_handle != NULL);
 
   int claim = libusb_claim_interface(dev_handle, 0);
-  assert(claim >= 0);
+  assert(0 == claim);
 
   printf("dev_hdl=%p claim=%d\n", (void *)dev_handle, claim);
 
   int release = libusb_release_interface(dev_handle, 0);
-  assert(release >= 0);
+  assert(0 == release);
 
   printf("release=%d\n", release);
 
