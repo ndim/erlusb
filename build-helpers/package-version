@@ -11,11 +11,14 @@ top_srcdir="${1-.}"
 	exit 1; \
 }
 version_stamp="${2-version-stamp}"
+top_srcdir=`cd "${top_srcdir}" && pwd`
 
 # If GIT_DIR is set, use it. If not, try top_srcdir/.git.
 if [ -n "$GIT_DIR" ]; then :;
 else GIT_DIR="$top_srcdir/.git"; export GIT_DIR
 fi
+
+cd "$top_srcdir"
 
 if [ -f "$top_srcdir/$version_stamp" ]; then # dist source tree
 	cat "$top_srcdir/$version_stamp" | ${TR-tr} -d '\012'
