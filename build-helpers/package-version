@@ -6,22 +6,37 @@
 # <version-stamp-file> is relative to src/build topdir
 
 top_srcdir="${1-.}"
-test -d "$top_srcdir" || { \
+[ -d "$top_srcdir" ] || { \
 	echo "Could not change to top_srcdir '$1'" >&2; \
 	exit 1; \
 }
 version_stamp="${2-version-stamp}"
 
 # If GIT_DIR is set, use it. If not, try top_srcdir/.git.
-if test -n "$GIT_DIR"; then :;
+if [ -n "$GIT_DIR" ]; then :;
 else GIT_DIR="$top_srcdir/.git"; export GIT_DIR
 fi
 
-if test -f "$top_srcdir/$version_stamp"; then # dist source tree
+if [ -f "$top_srcdir/$version_stamp" ]; then # dist source tree
 	cat "$top_srcdir/$version_stamp" | ${TR-tr} -d '\012'
-elif test -d "$GIT_DIR"; then # git source tree
+elif [ -d "$GIT_DIR" ]; then # git source tree
 	git_describe=`${GIT-git} describe 2>/dev/null || echo devel`
-	echo "$git_describe" | ${SED-sed} 's/^erlusb-//;s/-/./' | ${TR-tr} -d '\012'
+
+	git_branch=`${GIT-git} symbolic-ref HEAD | ${SED-sed} -n 's|^refs/heads/|-|p' | ${SED-sed} 's|/|_|g'`
+	[ "x$git_branch" = "x" ] && git_branch='-nobranch'
+
+	dirtystr=-dirty
+	[ "x$(${GIT-git} diff-files)" = "x" ] && [ "x$(${GIT-git} diff-index --cached HEAD)" = "x" ] && dirtystr=
+
+	part1=`echo "$git_describe" | ${SED-sed} 's/^erlusb-//;s/-/./'`
+	part3=$dirtystr
+	if echo "$part1" | ${GREP-grep} -- - >/dev/null || [ -n "$part3" ]; then
+		part2=$git_branch
+	else
+		part2=
+	fi
+
+	echo "${part1}${part2}${part3}" | ${TR-tr} -d '\012'
 else # ???
 	echo "devel" | ${TR-tr} -d '\012'
 fi
