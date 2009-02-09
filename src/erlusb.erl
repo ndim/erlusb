@@ -21,6 +21,7 @@
 -export([start/1, stop/0]).
 -export([usb_bus_list/0]).
 -export([send_packet/2]).
+-export([device/1]).
 
 %%% internal functions
 -export([init/1, loop/1]).
@@ -47,6 +48,9 @@ ei_tests() ->
 	     ]].
 usb_bus_list() ->
     call_port({usb_bus_list}).
+
+device(_) ->
+    {'TO_BE_IMPLEMENTED', ?MODULE, 'device'}. % FIXME: TBI
 
 send_packet(EndPoint, Payload) when is_integer(EndPoint), is_binary(Payload) ->
     call_port({send_packet, EndPoint, Payload}).
