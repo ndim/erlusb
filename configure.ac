@@ -15,6 +15,8 @@ AM_INIT_AUTOMAKE([
     subdir-objects
 ])
 
+AC_MSG_NOTICE([looking for compilers and tools])
+
 # Checks for programs.
 AC_PROG_CC
 
@@ -40,6 +42,7 @@ m4_pattern_forbid([^PKG_PROG_PKG_CONFIG])dnl
 PKG_PROG_PKG_CONFIG()
 
 # Checks for libraries.
+AC_MSG_NOTICE([checking for Erlang library locations])
 AC_ERLANG_CHECK_LIB([stdlib],
             [],
             [AC_MSG_ERROR([stdlib was not found!])])
@@ -59,6 +62,8 @@ AC_SUBST([erlpkgsrcdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/src"])
 AC_SUBST([erlpkglibdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/lib"])
 
 AC_SUBST([AM_ERLCFLAGS], [-v])
+
+AC_MSG_NOTICE([checking for C libs])
 
 PKG_CHECK_MODULES([LIBUSB], [libusb],
                   [have_libusb=yes],
@@ -93,7 +98,9 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 dnl Be nice to user.
-echo "erlusb compile option summary:
+cat<<EOF
+$PACKAGE_NAME compile option summary:
    libusb-0.1: $have_libusb
    libusb-1.0: $have_libusb_10
-Please verify that this meets your expectations."
+Please verify that this meets your expectations.
+EOF
