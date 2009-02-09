@@ -25,4 +25,7 @@ include src/Makefile-files
 
 AM_CFLAGS = -Wall -Werror -Wextra -Wno-long-long -Wno-pointer-sign -pedantic
 AM_CPPFLAGS = -I$(top_srcdir)/src
-AM_ERLCFLAGS = +debug_info
+AM_ERLCFLAGS =
+# AM_ERLCFLAGS += -hybrid
+AM_ERLCFLAGS += -v
+AM_ERLCFLAGS += +debug_info
