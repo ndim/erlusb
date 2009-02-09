@@ -29,3 +29,6 @@ AM_ERLCFLAGS =
 # AM_ERLCFLAGS += -hybrid
 AM_ERLCFLAGS += -v
 AM_ERLCFLAGS += +debug_info
+
+tidy:
+	cd $(top_srcdir) && $(ERL) -noshell -eval 'erl_tidy:dir("src",[verbose]).' -s erlang halt
