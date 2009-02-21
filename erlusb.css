@@ -3,21 +3,31 @@
 body {
     margin-top: 1.0em;
     background-color: #6e8486;
-    font-family: "sans-serif";
+    font-family: sans-serif;
     color: #ffffff;
 }
 
 #container {
     margin: 0 auto;
     width: 700px;
+    background-color: #fff;
+    color: #000;
 }
 
-h1 { font-size: 3.8em; color: #917b79; margin-bottom: 3px; }
+h1, h2, h3, a {
+    color: #66d;
+}
+
+h1 { font-size: 3.8em; margin-bottom: 3px; }
 h1 .small { font-size: 0.4em; }
 h1 a { text-decoration: none }
-h2 { font-size: 1.5em; color: #917b79; }
-h3 { text-align: center; color: #917b79; }
-a { color: #917b79; }
+h2 { font-size: 1.5em; }
+h3 { text-align: center; }
+a { text-decoration: underline; }
+
+a:link { color: #00f; }
+a:visited { color: #088; }
+a:active { color: #f00; }
 
 .description {
     font-size: 1.2em;
