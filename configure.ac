@@ -9,7 +9,7 @@ AC_CONFIG_AUX_DIR([auxdir])
 AM_INIT_AUTOMAKE([
     -Wall -Werror
     1.10
-    dist-bzip2 dist-lzma dist-zip
+    no-dist-gzip dist-lzma
     foreign
     filename-length-max=99
     subdir-objects
