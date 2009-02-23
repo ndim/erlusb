@@ -31,7 +31,7 @@ elif [ -d "$GIT_DIR" ]; then # git source tree
 	dirtystr=-dirty
 	[ "x$(${GIT-git} diff-files)" = "x" ] && [ "x$(${GIT-git} diff-index --cached HEAD)" = "x" ] && dirtystr=
 
-	part1=`echo "$git_describe" | ${SED-sed} 's/^erlusb-//;s/-/./'`
+	part1=`echo "$git_describe" | ${SED-sed} 's/^[a-zA-Z0-9\/-]\{1,\}-\([0-9]\{1,\}\.\)/\1/; s/-/./'`
 	part3=$dirtystr
 	if echo "$part1" | ${GREP-grep} -- - >/dev/null || [ -n "$part3" ]; then
 		part2=$git_branch
