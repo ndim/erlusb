@@ -1,6 +1,9 @@
-erlusb 0.3.*
+erlusb 0.4
   * Rudimentary libusb-1.0 support.
   * Only generate dist tarballs with lzma compression.
+  * Migrate Erlang/C interface to ei API
+  * Add skeleton file with GPS device support
+  * Use new git tags for releases: release/erlusb-0.4
 
 erlusb 0.3
   * Update stuff to work in git managed source tree.
