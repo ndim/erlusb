@@ -21,17 +21,8 @@ AC_MSG_NOTICE([looking for compilers and tools])
 AC_PROG_CC
 
 dnl We potentially need libtool to link against an uninstalled version
-dnl of libusb-1.0. None of the code is in C++ or Fortran, though.
-dnl Thanks a lot to libConfuse for the macro definition idea!
-AC_DEFUN([AC_PROG_F77], [:])
-AC_DEFUN([AC_PROG_FC], [:])
-AC_DEFUN([AC_PROG_CXX], [:])
-AC_DEFUN([AC_PROG_CXXCPP], [:])
-AC_DEFUN([AC_PROG_OBJC], [:])
-AC_DEFUN([AC_PROG_OBJCCPP], [:])
-AC_DEFUN([AC_LIBTOOL_CXX], [:])
-AC_DEFUN([AC_LIBTOOL_F77], [:])
-AC_PROG_LIBTOOL
+dnl of libusb-1.0.
+LT_INIT
 
 AM_PROG_CC_C_O
 AC_ERLANG_NEED_ERLC
