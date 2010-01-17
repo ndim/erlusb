@@ -15,7 +15,7 @@
 % License along with this library; if not, write to the Free Software
 % Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
--module(erlusb).
+-module(old_erlusb).
 
 %%% public API
 -export([start/1, stop/0]).
@@ -27,7 +27,7 @@
 -export([init/1, loop/1]).
 -export([ei_tests/0]).
 
--include("erlusb.hrl").
+-include("old_erlusb.hrl").
 
 -record(state, {port}).
 

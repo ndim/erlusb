@@ -21,7 +21,7 @@
 #include <unistd.h>
 
 #include "erlusb-log.h"
-#include "ei.h"
+#include <ei.h>
 
 
 static FILE *logfile = NULL;

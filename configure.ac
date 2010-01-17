@@ -3,7 +3,7 @@ AC_INIT([Erlang USB interface],
         [m4_esyscmd([./build-helpers/package-version . version-stamp])],
         [hun@n-dimensional.de],
         [erlusb])
-AC_CONFIG_SRCDIR([src/erlusb-main.c])
+AC_CONFIG_SRCDIR([erlusb/src/erlusb_app.erl])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_MACRO_DIR([m4])
@@ -92,6 +92,7 @@ AC_CONFIG_FILES([tests/atlocal])
 
 # Output files
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([erlusb/Makefile])
 AC_OUTPUT
 
 dnl Be nice to user.

@@ -1,0 +1,10 @@
+%% -*- erlang -*-
+{application, erlusb,
+ [{description, "Erlang USB interface"},
+  {vsn, "@VERSION@"},
+  {modules, [@MODULES@]},
+  {registered, [@REGISTERED@]},
+  {applications, [kernel,stdlib]},
+  {env, []},
+  {mod, {erlusb_app,[]}}
+ ]}.

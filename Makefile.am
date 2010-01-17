@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-SUBDIRS = $(subdirs) . tests
+SUBDIRS = $(subdirs) erlusb . tests
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -23,7 +23,6 @@ include build-helpers/package-version.mk
 include test/usb/Makefile-files
 include test/erl-1/Makefile-files
 include test/erl-2/Makefile-files
-include src/Makefile-files
 
 tidy:
 	cd $(top_srcdir) && $(ERL) -noshell -eval 'erl_tidy:dir("src",[verbose]).' -s erlang halt
