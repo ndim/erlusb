@@ -4,7 +4,7 @@ SUBDIRS = $(subdirs) . tests
 
 ACLOCAL_AMFLAGS = -I m4
 
-bin_PROGRAMS =
+# bin_PROGRAMS =
 check_PROGRAMS =
 check_DATA =
 check_SCRIPTS =
