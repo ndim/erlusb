@@ -9,8 +9,8 @@ AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([
     -Wall -Werror
-    1.10
-    no-dist-gzip dist-lzma
+    1.11
+    no-dist-gzip dist-xz
     foreign
     filename-length-max=99
     subdir-objects
