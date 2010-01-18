@@ -15,6 +15,7 @@ erlpkgebin_DATA =
 erlpkginclude_HEADERS =
 erlpkgpriv_PROGRAMS =
 erlpkgsrc_DATA =
+erlpkgtest_DATA =
 
 
 common_usb_c_sources =
@@ -22,6 +23,9 @@ common_usb_c_sources =
 
 SUFFIXES = .erl .beam
 ebin/%.beam: $(srcdir)/src/%.erl
+	$(ERLC) -I $(top_srcdir) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o ebin $<
+
+ebin/%.beam: $(srcdir)/test/%.erl
 	$(ERLC) -I $(top_srcdir) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o ebin $<
 
 
@@ -47,6 +51,7 @@ endif
 
 
 MODULES =
+TEST_MODULES =
 
 erlpkginclude_HEADERS += include/erlusb.hrl
 
@@ -59,11 +64,20 @@ ebin/erlusb.beam: $(srcdir)/src/erlusb.erl $(srcdir)/include/erlusb.hrl $(srcdir
 MODULES += erlusb_app
 MODULES += erlusb_sup
 
+TEST_MODULES    += lsusb
+TESTS           += test/test-lsusb.sh
+EXTRA_DIST      += test/test-lsusb.sh
+erlpkgtest_DATA += test/test-lsusb.sh
+
 erlpkgcsrc_DATA += $(sort $(common_usb_c_sources))
 erlpkgebin_DATA += $(foreach mod,$(MODULES),ebin/$(mod).beam)
+erlpkgebin_DATA += $(foreach mod,$(TEST_MODULES),ebin/$(mod).beam)
 erlpkgsrc_DATA  += $(foreach mod,$(MODULES),src/$(mod).erl)
-CLEANFILES      += $(foreach mod,$(MODULES),ebin/$(mod).beam ebin/$(mod).log ebin/$(mod).vlog)
+erlpkgtest_DATA += $(foreach mod,$(TEST_MODULES),test/$(mod).erl)
+CLEANFILES      += $(foreach mod,$(MODULES),ebin/$(mod).beam)
+CLEANFILES      += $(foreach mod,$(TEST_MODULES),ebin/$(mod).beam)
 EXTRA_DIST      += $(foreach mod,$(MODULES),src/$(mod).erl)
+EXTRA_DIST      += $(foreach mod,$(TEST_MODULES),test/$(mod).erl)
 
 
 REGISTERED =

@@ -58,6 +58,7 @@ AC_SUBST([erlpkgebindir],    ["\$(erlpkgrootdir)/ebin"])
 AC_SUBST([erlpkgincludedir], ["\$(erlpkgrootdir)/include"])
 AC_SUBST([erlpkgprivdir],    ["\$(erlpkgrootdir)/priv"])
 AC_SUBST([erlpkgsrcdir],     ["\$(erlpkgrootdir)/src"])
+AC_SUBST([erlpkgtestdir],    ["\$(erlpkgrootdir)/test"])
 
 dnl Missing: -Werror
 AC_SUBST([AM_CFLAGS], ["-Wall -Wextra -Wno-long-long -Wno-pointer-sign -pedantic"])
