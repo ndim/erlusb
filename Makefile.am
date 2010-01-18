@@ -2,6 +2,8 @@
 
 SUBDIRS = $(subdirs) . tests
 
+ACLOCAL_AMFLAGS = -I m4
+
 bin_PROGRAMS =
 check_PROGRAMS =
 check_DATA =
