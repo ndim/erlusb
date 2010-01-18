@@ -1,5 +1,5 @@
 AC_PREREQ(2.61) dnl -*- Autoconf -*-
-AC_INIT([Erlang USB interface],
+AC_INIT([Erlang USB device interface],
         [m4_esyscmd([./build-helpers/package-version . version-stamp])],
         [hun@n-dimensional.de],
         [erlusb])
