@@ -16,6 +16,10 @@ AM_INIT_AUTOMAKE([
     subdir-objects
 ])
 
+dnl Simplified version number
+dnl Change something like 0.4.4-gd77d781-feature_otp-architecture to 0.4.4
+AC_SUBST([EU_PACKAGE_VERSION], [`echo "$PACKAGE_VERSION" | sed 's/-.*//'`])
+
 AC_MSG_NOTICE([looking for compilers and tools])
 
 # Checks for programs.
@@ -46,7 +50,7 @@ AC_SUBST([ERL_INTERFACE_CPPFLAGS],
 AC_SUBST([ERL_INTERFACE_LIBS],
          ["\$(ERLANG_LIB_DIR_erl_interface)/lib/liberl_interface.a \$(ERLANG_LIB_DIR_erl_interface)/lib/libei.a"])
 
-AC_ERLANG_SUBST_INSTALL_LIB_SUBDIR([erlusb], [${PACKAGE_VERSION}])
+AC_ERLANG_SUBST_INSTALL_LIB_SUBDIR([erlusb], [${EU_PACKAGE_VERSION}])
 AC_SUBST([erlpkgcsrcdir],    ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/c_src"])
 AC_SUBST([erlpkgebindir],    ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/ebin"])
 AC_SUBST([erlpkgincludedir], ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/include"])
