@@ -53,7 +53,11 @@ AC_SUBST([erlpkgbindir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/bin"])
 AC_SUBST([erlpkgsrcdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/src"])
 AC_SUBST([erlpkglibdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/lib"])
 
-AC_SUBST([AM_ERLCFLAGS], [-v])
+dnl Missing: -Werror
+AC_SUBST([AM_CFLAGS], ["-Wall -Wextra -Wno-long-long -Wno-pointer-sign -pedantic"])
+AC_SUBST([AM_CPPFLAGS], ["-I\$(top_srcdir)/src"])
+dnl Missing: -hybrid
+AC_SUBST([AM_ERLCFLAGS], ["-v +debuginfo"])
 
 AC_MSG_NOTICE([checking for C libs])
 
