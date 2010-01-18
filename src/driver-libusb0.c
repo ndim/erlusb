@@ -193,16 +193,19 @@ ei_x_encode_usb_device_descriptor(ei_x_buff *wb,
 				  struct usb_device_descriptor *descriptor)
 {
   CHECK_EI(ei_x_encode_tuple_header(wb, 15));
+
   CHECK_EI(ei_x_encode_atom(wb, "usb_device_descriptor"));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bLength));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bDescriptorType));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bcdUSB));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bDeviceClass));
+
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bDeviceSubClass));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bDeviceProtocol));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bMaxPacketSize0));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->idVendor));
   CHECK_EI(ei_x_encode_uint(wb, descriptor->idProduct));
+
   CHECK_EI(ei_x_encode_uint(wb, descriptor->bcdDevice));
   ei_x_encode_usb_string(wb, hdl, descriptor->iManufacturer);
   ei_x_encode_usb_string(wb, hdl, descriptor->iProduct);
