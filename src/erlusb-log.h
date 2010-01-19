@@ -20,6 +20,29 @@
 #define ERLUSB_LOG_H
 
 #include <stdlib.h>
+#include <string.h>
+
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
+# define LOGF(...)					       \
+  do {							       \
+    const char *const slash = strrchr(__FILE__, '/');	       \
+    const char *const filename = (slash)?(slash+1):(__FILE__); \
+    log_printf("%s:%d: %s(): ",				       \
+	       filename, __LINE__, __FUNCTION__);	       \
+    log_printf(__VA_ARGS__);				       \
+  } while (0)
+#elif defined(__GNUC__) && (__GNUC__ >= 2)
+# define LOGF(format, args...)				       \
+  do {							       \
+    const char *const slash = strrchr(__FILE__, '/');	       \
+    const char *const filename = (slash)?(slash+1):(__FILE__); \
+    log_printf("%s:%d: %s(): ",				       \
+	       filename, __LINE__, __FUNCTION__);	       \
+    log_printf(format, ##args);				       \
+  } while (0)
+#else
+# error Need stdc-like or GNU-like variadic macros
+#endif
 
 extern
 void

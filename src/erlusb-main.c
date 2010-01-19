@@ -61,7 +61,7 @@ int main() {
   assert(driver.exit);
   driver.init();
 
-  log_printf("erlusb.c init done, using driver %s\n", driver.name);
+  LOGF("init done, using driver %s\n", driver.name);
 
   while ((readlen = read_cmd(rbuf, sizeof(rbuf))) > 0) {
     ei_x_buff write_buffer;
@@ -73,24 +73,24 @@ int main() {
     int type=-1, size=-1;
     char atom[MAXATOMLEN+1];
     atom[0] = '\0';
-    log_printf("read message\n");
+    LOGF("read message\n");
     log_data(rbuf, readlen);
     log_buff_term(rbuf);
     CHECK_EI(ei_decode_version(rbuf, &index, &version));
-    log_printf("version: %d=0x%x\n", version, version);
+    LOGF("version: %d=0x%x\n", version, version);
     CHECK_EI(ei_get_type(rbuf, &index, &type, &size));
-    log_printf("type of received message: "
-	       "index=%d, type=%d=0x%x='%c', size=%d\n",
-	       index, type, type, type, size);
+    LOGF("type of received message: "
+	 "index=%d, type=%d=0x%x='%c', size=%d\n",
+	 index, type, type, type, size);
     CHECK_EI(ei_decode_tuple_header(rbuf, &index, &arity));
-    log_printf("decoded tuple header: index=%d, arity=%d\n", index, arity);
+    LOGF("decoded tuple header: index=%d, arity=%d\n", index, arity);
     CHECK_EI(ei_decode_atom(rbuf, &index, atom));
-    log_printf("decoded atom: index=%d, atom=%s\n", index, atom);
+    LOGF("decoded atom: index=%d, atom=%s\n", index, atom);
 
     CHECK_EI(ei_x_new_with_version(wb));
     wb_empty_index = wb->index;
 
-    log_printf("checking message: %s\n", atom);
+    LOGF("checking message: %s\n", atom);
     if (0) {
       /* nothing */
     } else if (strncmp(atom, "send_packet", 12) == 0) {
@@ -134,19 +134,19 @@ int main() {
     if (wb->index > wb_empty_index) {
       /* OK */
     } else {
-      log_printf("no message to write back\n");
+      LOGF("no message to write back\n");
       CHECK_EI(ei_x_encode_tuple_header(wb, 3));
       CHECK_EI(ei_x_encode_atom(wb, "internal_error"));
       CHECK_EI(ei_x_encode_atom(wb, "no_message_for"));
       CHECK_EI(ei_x_encode_atom(wb, atom));
     }
 
-    log_printf("writing message: wb->buffsz=%d wb->index=%d\n",
+    LOGF("writing message: wb->buffsz=%d wb->index=%d\n",
 	       wb->buffsz, wb->index);
     log_data(wb->buff, wb->index);
     log_buff_term(wb->buff);
     write_cmd(wb->buff, wb->index);
-    log_printf("wrote message\n");
+    LOGF("wrote message\n");
 
     CHECK_EI(ei_x_free(wb));
   }

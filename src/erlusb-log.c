@@ -32,13 +32,14 @@ log_init()
 {
   logfile = fopen("erlusb.log", "a");
   setvbuf(logfile, NULL, _IONBF, 0);
+  LOGF("opened\n");
 }
 
 
 void
 log_close()
 {
-  fprintf(logfile, "erlusb.c finished.\n");
+  LOGF("finished\n");
   fclose(logfile);
 }
 
