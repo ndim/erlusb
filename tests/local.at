@@ -1,4 +1,0 @@
-AT_TESTED([autom4te autoconf autoheader autoupdate autoreconf])
-AT_INIT
-AT_COPYRIGHT([Copyright (C) 2007 Hans Ulrich Niedermann])
-# Local initialization of the test environment would happen here

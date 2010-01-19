@@ -1,8 +1,0 @@
-# -*- Makefile -*-
-
-noinst_PROGRAMS += test-usb
-check_PROGRAMS  += test-usb
-TESTS           += test-usb
-
-test_usb_SOURCES = test/usb/test-usb.c
-test_usb_LDFLAGS = $(LIBUSB_LIBS)

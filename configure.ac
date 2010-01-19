@@ -83,11 +83,6 @@ dnl FIXME: check that sizeof(long) >= sizeof(size_t)
 # Make sure the versions are always accurate
 AC_CONFIG_FILES([GNUmakefile])
 
-# Initialize the test suite
-AC_CONFIG_TESTDIR([tests])
-AC_CONFIG_FILES([tests/Makefile])
-AC_CONFIG_FILES([tests/atlocal])
-
 # Subpackages
 
 # Output files

@@ -1,6 +1,0 @@
-complex2:start("./test-erl").
-complex2:foo(3).
-complex2:bar(5).
-complex2:bar(352).
-complex2:stop().
-stop
