@@ -67,11 +67,6 @@ AC_SUBST([AM_ERLCFLAGS], ["-v +debuginfo"])
 
 AC_MSG_NOTICE([checking for C libs])
 
-PKG_CHECK_MODULES([LIBUSB], [libusb],
-                  [have_libusb=yes],
-                  [have_libusb=no])
-AM_CONDITIONAL([HAVE_LIBUSB], [test "x$have_libusb" = "xyes"])
-
 PKG_CHECK_MODULES([LIBUSB_10], [libusb-1.0],
                   [have_libusb_10=yes],
                   [have_libusb_10=no])
@@ -102,7 +97,6 @@ AC_OUTPUT
 dnl Be nice to user.
 cat<<EOF
 $PACKAGE_NAME compile option summary:
-   libusb-0.1: $have_libusb
    libusb-1.0: $have_libusb_10
 Please verify that this meets your expectations.
 EOF

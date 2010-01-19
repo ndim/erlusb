@@ -6,25 +6,6 @@ erlpkgpriv_PROGRAMS =
 erlpkgsrc_DATA =
 
 
-if HAVE_LIBUSB
-EXTRA_DIST += src/test-libusb0.sh src/test-libusb0.cmds
-TESTS += src/test-libusb0.sh
-check_PROGRAMS += erlusb-libusb0
-
-erlpkgpriv_PROGRAMS += erlusb-libusb0
-erlusb_libusb0_SOURCES  = src/erlusb-main.c
-erlusb_libusb0_SOURCES += src/erlusb-ei.c src/erlusb-ei.h
-erlusb_libusb0_SOURCES += src/erlusb-log.c src/erlusb-log.h
-erlusb_libusb0_SOURCES += src/driver-libusb0.c src/driver.h
-# libusb-0.1's usb.h does not work with --std=c99
-# erlusb-log.c does not work with --std=c89 (requires va_copy)
-# so gnu89 fits the bill
-erlusb_libusb0_CPPFLAGS = $(AM_CPPFLAGS) $(ERL_INTERFACE_CPPFLAGS) --std=gnu89 $(LIBUSB_CFLAGS) $(CPPFLAGS)
-erlusb_libusb0_LDADD = $(ERL_INTERFACE_LIBS) $(LIBUSB_LIBS)
-erlusb_libusb0_LDFLAGS = -lpthread
-endif
-
-
 if HAVE_LIBUSB_10
 EXTRA_DIST += src/test-libusb1.sh src/test-libusb1.cmds
 TESTS += src/test-libusb1.sh
