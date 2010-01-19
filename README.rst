@@ -8,43 +8,35 @@ erlusb
 What is erlusb?
 ---------------
 
-erlusb might become an Erlang library with a general purpose interface
+erlusb might become an Erlang_ library with a general purpose interface
 to USB devices some time.
 
-As of 2009-01-21, Erlusb is just a private research project to see how
-to interface an USB device to an Erlang program.
+As of 2009-01-21, erlusb is just a personal research project to see
+how to interface an USB_ device to an Erlang program, and how to do an
+Erlang/OTP application design implementing such an interface.
+
+The hope is that Erlang's binary pattern matching, message passing,
+and finite state machine support make writing device interfaces
+(communicating FSMs) easy, clean, and fun - as opposed to writing such
+interfaces in other languages.
+
+.. _Erlang: http://www.erlang.org/
+.. _USB:    http://www.usb.org/
 
 
 
 What is the plan?
 -----------------
 
-First off, we need to find out which underlying C API to use. Candidates
-include libusb-0.1_, libusb-1.0_, and openusb_.
+Reached Milestones:
 
-  * libusb-0.1_ (or libusb-compat-0.1_)
-     * compatible implementation for Win32 exists (libusb-win32)
-     * no isochronous transfer support
-     * very commonly used
-  * libusb-1.0_
-     * implementation for Win32 is in the works
-     * isochronous transfer support
-     * very commonly used
-  * openusb_
-     * does anyone use this at all?
-
-The safest bet appears to be libusb-1.0_.
-
-.. _libusb-0.1:        http://www.libusb.org/
-.. _libusb-compat-0.1: http://www.libusb.org/wiki/LibusbCompat0.1
-.. _libusb-1.0:        http://www.libusb.org/wiki/Libusb1.0
-.. _openusb:           http://sourceforge.net/projects/openusb/
+  TBD
 
 Planned Milestones:
 
   0.5 Basic working OTP architecture
 
-  0.6 USB device list and device hotplugging
+  0.6 USB device list querying and tracking of device hotplugging
 
   0.7 Communication with USB device (example: Garmin GPS 60)
 
@@ -53,10 +45,6 @@ Planned Milestones:
   0.9 Polishing
 
   1.0 one dot zero!
-
-Reached Milestones:
-
-  TBD
 
 
 
@@ -72,6 +60,10 @@ Run::
 
 This requires that a number of software packages are installed, such
 as autoconf_, automake_, erlang_, gcc_, libtool_, GNU make_, and more.
+
+It might also be possible to build in the source directory
+("./configure && make && make install"), but this is not tested
+regularly.
 
 .. _autoconf: http://www.gnu.org/software/autoconf/
 .. _automake: http://www.gnu.org/software/automake/
@@ -102,3 +94,41 @@ Ideas
       received (data from port)
  * USB devices being local, the usb server process only makes sense as
    {local, Foo}
+ * A gen_fsm for devices might make more sense than a
+   gen_server. Communicating with another device by messages is a
+   classical example for communicating FSMs, after all.
+ * Make a decision: One Erlang port (one libusb instance per USB host)
+   for all devices, or one Erlang port (one libusb instance per USB
+   device) for each device?
+
+
+
+Design arguments
+----------------
+
+USB interface library
+~~~~~~~~~~~~~~~~~~~~~
+
+First off, we needed to find out which underlying C API to
+use. Candidates included libusb-0.1_, libusb-1.0_, and openusb_.
+
+  * libusb-0.1_ (or libusb-compat-0.1_)
+     * compatible implementation for Win32 exists (libusb-win32)
+     * no isochronous transfer mode support
+     * very commonly used
+  * libusb-1.0_
+     * implementation for Win32 is in the works
+     * isochronous transfer mode support
+     * very commonly used
+  * openusb_
+     * does anyone use this at all?
+
+The safest bet appeared to be libusb-1.0_. It is widely used, and
+supports all transfer modes. So erlusb builds on libusb-1.0_.
+
+.. _libusb-0.1:        http://www.libusb.org/
+.. _libusb-compat-0.1: http://www.libusb.org/wiki/LibusbCompat0.1
+.. _libusb-1.0:        http://www.libusb.org/wiki/Libusb1.0
+.. _openusb:           http://sourceforge.net/projects/openusb/
+
+
