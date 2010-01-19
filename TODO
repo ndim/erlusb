@@ -1,0 +1,24 @@
+TODO for 2.5:
+
+  * Review whether the OTP plumbing is correct
+
+DONE for 2.5:
+
+  * Verify basic communication with USB device manager (get device list)
+
+  * Move APP_NAME and SERVER_NAME definitions to appropriate place.
+
+TODO:
+
+  * Simplify comm protocol with Erlang port. Should make parsing and
+    constructing messages easier. Use less string comparisons, more
+    table indexes.
+
+  * Rename erlpkg* variables to erlusb*, avoid PACKAGE_NAME in *.app
+    files. We might want to put another Erlang app into this package,
+    e.g. an example garmin.app.
+
+  * Check parallel builds (make -j). There might be some dependencies
+    missing and thus the parallel build might or even will fail.
+
+DONE:
