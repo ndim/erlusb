@@ -51,11 +51,13 @@ AC_SUBST([ERL_INTERFACE_LIBS],
          ["\$(ERLANG_LIB_DIR_erl_interface)/lib/liberl_interface.a \$(ERLANG_LIB_DIR_erl_interface)/lib/libei.a"])
 
 AC_ERLANG_SUBST_INSTALL_LIB_SUBDIR([erlusb], [${EU_PACKAGE_VERSION}])
-AC_SUBST([erlpkgcsrcdir],    ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/c_src"])
-AC_SUBST([erlpkgebindir],    ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/ebin"])
-AC_SUBST([erlpkgincludedir], ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/include"])
-AC_SUBST([erlpkgprivdir],    ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/priv"])
-AC_SUBST([erlpkgsrcdir],     ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)/src"])
+AC_SUBST([erlpkgrootdir],    ["\$(ERLANG_INSTALL_LIB_DIR_erlusb)"])
+dnl
+AC_SUBST([erlpkgcsrcdir],    ["\$(erlpkgrootdir)/c_src"])
+AC_SUBST([erlpkgebindir],    ["\$(erlpkgrootdir)/ebin"])
+AC_SUBST([erlpkgincludedir], ["\$(erlpkgrootdir)/include"])
+AC_SUBST([erlpkgprivdir],    ["\$(erlpkgrootdir)/priv"])
+AC_SUBST([erlpkgsrcdir],     ["\$(erlpkgrootdir)/src"])
 
 dnl Missing: -Werror
 AC_SUBST([AM_CFLAGS], ["-Wall -Wextra -Wno-long-long -Wno-pointer-sign -pedantic"])
