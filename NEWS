@@ -1,3 +1,6 @@
+erlusb 0.4.x
+  * FIXME
+
 erlusb 0.4
   * Rudimentary libusb-1.0 support.
   * Only generate dist tarballs with lzma compression.
