@@ -30,11 +30,9 @@ What is the plan?
 
 Reached Milestones:
 
-  TBD
+  0.5 Basic working OTP architecture
 
 Planned Milestones:
-
-  0.5 Basic working OTP architecture
 
   0.6 USB device list querying and tracking of device hotplugging
 

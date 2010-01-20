@@ -1,5 +1,10 @@
-erlusb 0.4.x
-  * FIXME
+erlusb 0.5
+  * Remove all code and tests not needed for the OTP application
+  * Exclusively support libusb-1.0
+  * Write Erlang code as OTP application
+  * Improved debug logs with file name, line number, function name
+  * Switch tarballs from lzma to xz compression
+  * README now in rst format, and with more elaborate content.
 
 erlusb 0.4
   * Rudimentary libusb-1.0 support.
