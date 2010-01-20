@@ -1,7 +1,8 @@
 %% -*- erlang -*-
+%% @PACKAGE_TARNAME@-@PACKAGE_VERSION@
 {application, erlusb,
  [{description, "Erlang USB device interface"},
-  {vsn, "@VERSION@"},
+  {vsn, "@EU_PACKAGE_VERSION@"},
   {modules, [@MODULES@]},
   {registered, [@REGISTERED@]},
   {applications, [kernel,stdlib]},

@@ -91,7 +91,9 @@ EXTRA_DIST      += src/erlusb.app.in
 ebin/erlusb.app: $(srcdir)/src/erlusb.app.in Makefile $(top_builddir)/config.status
 	mkdir -p ebin
 	$(SED) \
-		-e 's|[@]VERSION@|$(EU_PACKAGE_VERSION)|g' \
+		-e 's|[@]EU_PACKAGE_VERSION@|$(EU_PACKAGE_VERSION)|g' \
+		-e 's|[@]PACKAGE_TARNAME@|$(PACKAGE_TARNAME)|g' \
+		-e 's|[@]PACKAGE_VERSION@|$(PACKAGE_VERSION)|g' \
 		-e "s|[@]MODULES@|$(call commatize,$(MODULES))|g" \
 		-e "s|[@]REGISTERED@|$(call commatize,$(REGISTERED))|g" \
 		< "$(srcdir)/src/erlusb.app.in" \
