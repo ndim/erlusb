@@ -51,6 +51,7 @@ endif
 
 
 MODULES =
+REGISTERED =
 TEST_MODULES =
 
 erlpkginclude_HEADERS += include/erlusb.hrl
@@ -58,11 +59,14 @@ erlpkginclude_HEADERS += include/erlusb.hrl
 erlpkgsrc_DATA += src/erlusb_internal.hrl
 EXTRA_DIST     += src/erlusb_internal.hrl
 
-MODULES += erlusb
+REGISTERED += erlusb
+MODULES    += erlusb
 ebin/erlusb.beam: $(srcdir)/src/erlusb.erl $(srcdir)/include/erlusb.hrl $(srcdir)/src/erlusb_internal.hrl
 
 MODULES += erlusb_app
-MODULES += erlusb_sup
+
+REGISTERED += erlusb_sup
+MODULES    += erlusb_sup
 
 TEST_MODULES    += lsusb
 TESTS           += test/test-lsusb.sh
@@ -78,10 +82,6 @@ CLEANFILES      += $(foreach mod,$(MODULES),ebin/$(mod).beam)
 CLEANFILES      += $(foreach mod,$(TEST_MODULES),ebin/$(mod).beam)
 EXTRA_DIST      += $(foreach mod,$(MODULES),src/$(mod).erl)
 EXTRA_DIST      += $(foreach mod,$(TEST_MODULES),test/$(mod).erl)
-
-
-REGISTERED =
-REGISTERED +=
 
 commatize = $(firstword $(1))$(foreach x,$(wordlist 2,999,$(1)),,$(x))
 

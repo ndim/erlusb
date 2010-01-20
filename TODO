@@ -1,13 +1,3 @@
-TODO for 2.5:
-
-  * Review whether the OTP plumbing is correct
-
-DONE for 2.5:
-
-  * Verify basic communication with USB device manager (get device list)
-
-  * Move APP_NAME and SERVER_NAME definitions to appropriate place.
-
 TODO:
 
   * Simplify comm protocol with Erlang port. Should make parsing and
@@ -22,3 +12,22 @@ TODO:
     missing and thus the parallel build might or even will fail.
 
 DONE:
+
+
+
+TODO for 0.6:
+
+
+
+DONE for 0.6:
+
+
+
+DONE for 0.5:
+
+  * Verify basic communication with USB device manager (get device list)
+
+  * Move APP_NAME and SERVER_NAME definitions to appropriate place.
+
+  * Review whether the OTP plumbing is correct. [apparently]
+
