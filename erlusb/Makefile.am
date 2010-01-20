@@ -23,9 +23,11 @@ common_usb_c_sources =
 
 SUFFIXES = .erl .beam
 ebin/%.beam: $(srcdir)/src/%.erl
+	mkdir -p ebin
 	$(ERLC) -I $(top_srcdir) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o ebin $<
 
 ebin/%.beam: $(srcdir)/test/%.erl
+	mkdir -p ebin
 	$(ERLC) -I $(top_srcdir) $(AM_ERLCFLAGS) $(ERLCFLAGS) -o ebin $<
 
 
