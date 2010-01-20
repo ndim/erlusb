@@ -18,7 +18,7 @@
 
 #include <assert.h>
 
-#include "old_driver.h"
+#include "driver.h"
 
 #include <libusb.h>
 

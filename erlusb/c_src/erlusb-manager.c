@@ -23,7 +23,7 @@
 #include <erl_interface.h>
 #include <ei.h>
 
-#include "old_driver.h"
+#include "driver.h"
 #include "erlusb-ei.h"
 #include "erlusb-log.h"
 
