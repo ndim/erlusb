@@ -7,8 +7,12 @@ AC_CONFIG_SRCDIR([erlusb/src/erlusb_app.erl])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_MACRO_DIR([m4])
+dnl Please not that we cannot use -Werror for Automake
+dnl unfortunately. The reason is that erlusb/Makefile.am is still
+dnl relying on a significant number of GNU make-isms which generate
+dnl warnings in Automake.
 AM_INIT_AUTOMAKE([
-    -Wall -Werror
+    -Wall
     1.11
     no-dist-gzip dist-xz
     foreign
